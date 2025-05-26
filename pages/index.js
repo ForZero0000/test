@@ -241,7 +241,7 @@ export default function Home() {
             )}
           </div>
           <a
-            href="https://x.com/intent/post?text=THE%20DATA%20IS%20PROGRAMMABLE%20with%20%40irys_xyz%0A%0AIryna%20LOVES%20ME!%20What%20about%20you%3F"
+            href="https://x.com/intent/post?text=THE%20DATA%20IS%20PROGRAMMABLE%20with%20%40irys_xyz%0A%0AIryna%20LOVES%20ME!%20What%20about%20you%3F%0A%0Acheck%20here%20-%20https%3A%2F%2Fwww.iryna-checker-meme.app%2F"
             target="_blank"
             rel="noopener noreferrer"
           >
