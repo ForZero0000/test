@@ -46,7 +46,6 @@ function Game2048() {
   function handleMove(direction) {
     let newBoard = [...board];
 
-    // Обработка сдвига в разных направлениях
     const moveLeft = (arr) => {
       let rowVals = arr.filter((v) => v !== 0);
       for (let i = 0; i < rowVals.length - 1; i++) {
@@ -155,7 +154,7 @@ function Game2048() {
             key={dir}
             onClick={() => handleMove(dir)}
             style={{
-              padding: '13px 27px', // уменьшил в 1.5 раза
+              padding: '13px 27px', // уменьшенный размер
               borderRadius: '20px',
               backgroundColor: '#00BFFF',
               color: 'white',
@@ -206,15 +205,24 @@ export default function Home() {
           padding: '2rem',
           color: 'white',
           display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'flex-end',
-          justifyContent: 'center',
-          gap: '1rem',
-          minWidth: 0,
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          gap: '2rem',
         }}
       >
-        {/* Верхний блок с input, кнопкой, твиттером */}
-        <div style={{ width: '100%', maxWidth: '400px', textAlign: 'right' }}>
+        {/* Картинка Iryna слева */}
+        <div style={{ flexShrink: 0 }}>
+          <Image
+            src="/IMG_1271 (2).webp"
+            alt="Iryna"
+            width={300}
+            height={300}
+            style={{ borderRadius: '20px', display: 'block' }}
+          />
+        </div>
+
+        {/* Центр: поле ввода и кнопка Check (вертикально) */}
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', minWidth: '250px' }}>
           <input
             type="text"
             placeholder="do you love Iryna?"
@@ -223,8 +231,8 @@ export default function Home() {
               borderRadius: '30px',
               border: 'none',
               width: '100%',
+              marginBottom: '10px',
               boxSizing: 'border-box',
-              marginBottom: '0.5rem',
             }}
           />
           <button
@@ -237,39 +245,13 @@ export default function Home() {
               border: 'none',
               cursor: 'pointer',
               width: '100%',
-              marginBottom: '0.5rem',
+              fontWeight: 'bold',
+              fontSize: '16px',
             }}
           >
             Check
           </button>
-
-          <a
-            href="https://x.com/intent/post?text=THE%20DATA%20IS%20PROGRAMMABLE%20with%20%40irys_xyz%0A%0AIryna%20LOVES%20ME!%20What%20about%20you%3F"
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{ display: 'inline-block', cursor: 'pointer' }}
-          >
-            <Image src="/twitter.png" alt="Twitter" width={40} height={40} />
-          </a>
-
           {loved && (
-            <p style={{ fontWeight: 'bold', marginTop: '1rem' }}>
+            <p style={{ fontWeight: 'bold', marginTop: '1rem', textAlign: 'center' }}>
               IRYNA LOVES YOU, DEAR!
             </p>
-          )}
-        </div>
-
-        {/* Картинка Iryna справа */}
-        <div style={{ marginTop: 'auto', maxWidth: '400px', width: '100%' }}>
-          <Image
-            src="/IMG_1271 (2).webp"
-            alt="Iryna"
-            width={300}
-            height={300}
-            style={{ borderRadius: '20px', display: 'block', marginLeft: 'auto' }}
-          />
-        </div>
-      </div>
-    </div>
-  );
-}
