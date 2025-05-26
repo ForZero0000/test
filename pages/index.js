@@ -4,7 +4,7 @@ import Image from 'next/image';
 const SIZE = 4;
 
 const COLOR_MAP = {
-  2: '#ffff99', // light yellow
+  2: '#ffff99',
   4: '#ffff66',
   8: '#ffff33',
   16: '#ffcc00',
@@ -14,7 +14,7 @@ const COLOR_MAP = {
   256: '#cc33ff',
   512: '#9966ff',
   1024: '#3399ff',
-  2048: '#00ccff', // blue
+  2048: '#00ccff',
 };
 
 function getRandomEmptyCell(board) {
@@ -90,6 +90,7 @@ function move(board, direction) {
 
 export default function Home() {
   const [board, setBoard] = useState(() => spawnTile(spawnTile(Array(SIZE).fill().map(() => Array(SIZE).fill(0)))));
+  const [showLoveMessage, setShowLoveMessage] = useState(false);
 
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -132,7 +133,38 @@ export default function Home() {
         position: 'relative'
       }}
     >
-      <h1>Do you love Irys?</h1>
+      <div style={{ display: 'flex', alignItems: 'center', marginBottom: '30px' }}>
+        <div style={{ marginRight: '30px' }}>
+          <input
+            type="text"
+            placeholder="do you love Iryna?"
+            style={{ padding: '10px 20px', borderRadius: '20px', border: 'none', width: '200px' }}
+          />
+          <button
+            style={{
+              marginTop: '10px',
+              padding: '10px 20px',
+              borderRadius: '20px',
+              backgroundColor: '#000',
+              color: '#fff',
+              border: 'none',
+              cursor: 'pointer'
+            }}
+            onClick={() => setShowLoveMessage(true)}
+          >
+            Check
+          </button>
+          {showLoveMessage && (
+            <p style={{ marginTop: '10px', fontWeight: 'bold', fontSize: '18px' }}>IRYNA LOVES YOU, DEAR!</p>
+          )}
+        </div>
+
+        <img
+          src="/IMG_1271 (2).webp"
+          alt="Iryna"
+          style={{ maxWidth: '300px', borderRadius: '20px' }}
+        />
+      </div>
 
       <div style={{
         backgroundColor: 'black',
@@ -181,12 +213,6 @@ export default function Home() {
         <p style={{ color: 'white', marginTop: '20px', fontSize: '20px' }}>
           I LOVE IRYS VERY MUCH!
         </p>
-
-        <img
-          src="/IMG_1271 (2).webp"
-          alt="Iryna"
-          style={{ marginTop: '20px', maxWidth: '300px', borderRadius: '20px' }}
-        />
 
         <a
           href="https://x.com/intent/post?text=THE%20DATA%20IS%20PROGRAMMABLE%20with%20%40irys_xyz%0A%0AIryna%20LOVES%20ME!%20What%20about%20you%3F"
