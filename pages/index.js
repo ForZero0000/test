@@ -1,256 +1,106 @@
-import { useEffect, useState } from 'react';
 import Image from 'next/image';
+import { useState } from 'react';
+import dynamic from 'next/dynamic';
 
-const SIZE = 4;
-
-const COLOR_MAP = {
-  2: '#ffff99',
-  4: '#ffff66',
-  8: '#ffff33',
-  16: '#ffcc00',
-  32: '#ff9900',
-  64: '#ff6600',
-  128: '#ff3333',
-  256: '#cc33ff',
-  512: '#9966ff',
-  1024: '#3399ff',
-  2048: '#00ccff',
-};
-
-function getRandomEmptyCell(board) {
-  const emptyCells = [];
-  for (let r = 0; r < SIZE; r++) {
-    for (let c = 0; c < SIZE; c++) {
-      if (board[r][c] === 0) emptyCells.push([r, c]);
-    }
-  }
-  return emptyCells[Math.floor(Math.random() * emptyCells.length)];
-}
-
-function spawnTile(board) {
-  const newBoard = board.map(row => [...row]);
-  const cell = getRandomEmptyCell(newBoard);
-  if (cell) {
-    const [r, c] = cell;
-    newBoard[r][c] = Math.random() < 0.9 ? 2 : 4;
-  }
-  return newBoard;
-}
-
-function moveLeft(board) {
-  let moved = false;
-  const newBoard = board.map(row => {
-    const newRow = row.filter(n => n !== 0);
-    for (let i = 0; i < newRow.length - 1; i++) {
-      if (newRow[i] === newRow[i + 1]) {
-        newRow[i] *= 2;
-        newRow[i + 1] = 0;
-        moved = true;
-      }
-    }
-    const filtered = newRow.filter(n => n !== 0);
-    while (filtered.length < SIZE) filtered.push(0);
-    if (filtered.some((v, i) => v !== row[i])) moved = true;
-    return filtered;
-  });
-  return { board: newBoard, moved };
-}
-
-function rotateBoard(board) {
-  return board[0].map((_, i) => board.map(row => row[i]).reverse());
-}
-
-function move(board, direction) {
-  let newBoard = board;
-  let rotated = 0;
-
-  switch (direction) {
-    case 'up':
-      newBoard = rotateBoard(rotateBoard(rotateBoard(newBoard)));
-      rotated = 3;
-      break;
-    case 'right':
-      newBoard = rotateBoard(rotateBoard(newBoard));
-      rotated = 2;
-      break;
-    case 'down':
-      newBoard = rotateBoard(newBoard);
-      rotated = 1;
-      break;
-  }
-
-  const { board: movedBoard, moved } = moveLeft(newBoard);
-
-  for (let i = 0; i < (4 - rotated) % 4; i++) {
-    movedBoard = rotateBoard(movedBoard);
-  }
-
-  return { board: movedBoard, moved };
-}
+const Game2048 = dynamic(() => import('@/components/Game2048'), { ssr: false });
 
 export default function Home() {
-  const [board, setBoard] = useState(() => spawnTile(spawnTile(Array(SIZE).fill().map(() => Array(SIZE).fill(0)))));
-  const [showLoveMessage, setShowLoveMessage] = useState(false);
-
-  useEffect(() => {
-    const handleKeyDown = (e) => {
-      const direction = {
-        ArrowUp: 'up',
-        ArrowDown: 'down',
-        ArrowLeft: 'left',
-        ArrowRight: 'right',
-      }[e.key];
-
-      if (direction) {
-        const { board: newBoard, moved } = move(board, direction);
-        if (moved) setBoard(spawnTile(newBoard));
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [board]);
-
-  const moveWithArrow = (direction) => {
-    const { board: newBoard, moved } = move(board, direction);
-    if (moved) setBoard(spawnTile(newBoard));
-  };
+  const [loved, setLoved] = useState(false);
 
   return (
     <div
       style={{
-        backgroundImage: 'url("/irys.png")',
+        backgroundImage: 'url(/irys.png)',
         backgroundSize: 'cover',
-        backgroundPosition: 'center',
         minHeight: '100vh',
+        padding: '2rem',
+        boxSizing: 'border-box',
         display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        padding: '60px 20px',
-        fontFamily: 'Arial, sans-serif',
         flexDirection: 'column',
-        color: 'white',
-        position: 'relative'
+        justifyContent: 'space-between',
       }}
     >
-      <div style={{ display: 'flex', alignItems: 'center', marginBottom: '30px' }}>
-        <div style={{ marginRight: '30px' }}>
+      {/* Обёртка для фото и формы — чёрный закруглённый прямоугольник */}
+      <div style={{ display: 'flex', alignItems: 'center', backgroundColor: 'black', borderRadius: '20px', padding: '2rem' }}>
+        <div style={{ flex: 1, color: 'white' }}>
           <input
             type="text"
             placeholder="do you love Iryna?"
-            style={{ padding: '10px 20px', borderRadius: '20px', border: 'none', width: '200px' }}
+            style={{
+              padding: '10px 20px',
+              borderRadius: '30px',
+              border: 'none',
+              marginRight: '1rem',
+              width: '250px',
+            }}
           />
           <button
+            onClick={() => setLoved(true)}
             style={{
-              marginTop: '10px',
-              padding: '10px 20px',
-              borderRadius: '20px',
-              backgroundColor: '#000',
-              color: '#fff',
+              padding: '10px 30px',
+              borderRadius: '30px',
+              backgroundColor: '#00BFFF',
+              color: 'white',
               border: 'none',
-              cursor: 'pointer'
+              cursor: 'pointer',
             }}
-            onClick={() => setShowLoveMessage(true)}
           >
             Check
           </button>
-          {showLoveMessage && (
-            <p style={{ marginTop: '10px', fontWeight: 'bold', fontSize: '18px' }}>IRYNA LOVES YOU, DEAR!</p>
+          {loved && (
+            <p style={{ fontWeight: 'bold', marginTop: '1rem', color: 'white' }}>
+              IRYNA LOVES YOU, DEAR!
+            </p>
           )}
         </div>
-
-        <img
-          src="/IMG_1271 (2).webp"
-          alt="Iryna"
-          style={{ maxWidth: '300px', borderRadius: '20px' }}
-        />
+        <div style={{ flexShrink: 0, marginLeft: '2rem' }}>
+          <Image src="/IMG_1271 (2).webp" alt="Iryna" width={300} height={400} style={{ borderRadius: '20px' }} />
+          <a
+            href="https://x.com/intent/post?text=THE%20DATA%20IS%20PROGRAMMABLE%20with%20%40irys_xyz%0A%0AIryna%20LOVES%20ME!%20What%20about%20you%3F"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <Image src="/twitter.png" alt="Twitter" width={40} height={40} style={{ marginTop: '1rem', cursor: 'pointer' }} />
+          </a>
+        </div>
       </div>
 
-      <div style={{
-        backgroundColor: 'black',
-        borderRadius: '20px',
-        padding: '20px',
-        marginTop: '20px',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center'
-      }}>
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: `repeat(${SIZE}, 80px)`,
-          gap: '10px',
-          backgroundColor: '#222',
-          padding: '10px',
+      {/* Игра 2048 */}
+      <div style={{ marginTop: '3rem' }}>
+        <Game2048 />
+      </div>
+
+      {/* Бегущая строка, увеличенный шрифт */}
+      <div
+        style={{
+          backgroundColor: 'black',
           borderRadius: '20px',
-        }}>
-          {board.map((row, i) =>
-            row.map((cell, j) => (
-              <div key={`${i}-${j}`} style={{
-                width: '80px',
-                height: '80px',
-                backgroundColor: COLOR_MAP[cell] || '#ccc',
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                fontWeight: 'bold',
-                fontSize: '24px',
-                color: '#000',
-                borderRadius: '10px',
-              }}>
-                {cell !== 0 ? cell : ''}
-              </div>
-            ))
-          )}
-        </div>
-
-        <div style={{ marginTop: '20px', display: 'flex', gap: '10px', flexWrap: 'wrap', justifyContent: 'center' }}>
-          <button onClick={() => moveWithArrow('up')}>⬆️</button>
-          <button onClick={() => moveWithArrow('left')}>⬅️</button>
-          <button onClick={() => moveWithArrow('down')}>⬇️</button>
-          <button onClick={() => moveWithArrow('right')}>➡️</button>
-        </div>
-
-        <p style={{ color: 'white', marginTop: '20px', fontSize: '20px' }}>
-          I LOVE IRYS VERY MUCH!
-        </p>
-
-        <a
-          href="https://x.com/intent/post?text=THE%20DATA%20IS%20PROGRAMMABLE%20with%20%40irys_xyz%0A%0AIryna%20LOVES%20ME!%20What%20about%20you%3F"
-          target="_blank"
-          rel="noopener noreferrer"
-          style={{ marginTop: '20px' }}
+          padding: '1rem',
+          marginTop: '3rem',
+          overflow: 'hidden',
+          whiteSpace: 'nowrap',
+        }}
+      >
+        <div
+          style={{
+            display: 'inline-block',
+            animation: 'scroll 20s linear infinite',
+            fontSize: '3rem', // увеличил в 2 раза с 1.5rem
+            color: 'white',
+          }}
         >
-          <img
-            src="/twitter.png"
-            alt="Twitter Share"
-            style={{ width: '50px', height: '50px', marginTop: '10px' }}
-          />
-        </a>
-      </div>
-
-      <div style={{
-        position: 'absolute',
-        bottom: '0',
-        left: '0',
-        width: '100%',
-        backgroundColor: 'black',
-        color: 'white',
-        padding: '10px 0',
-        whiteSpace: 'nowrap',
-        overflow: 'hidden'
-      }}>
-        <div style={{
-          display: 'inline-block',
-          animation: 'scroll-left 20s linear infinite',
-        }}>
-          FUTURE OF ALL WORLD DATA - THE DATA IS PROGRAMMABLE - More data. Lower cost. Greater utility - PROGAMMABLE DATA, ZERO LIMITS - DATA BELONGS ON IRYS —
+          FUTURE OF ALL WOLRD DATA - THE DATA IS PROGRAMMABLE - More data. Lower cost. Greater utility - PROGAMMABLE DATA, ZERO LIMITS - DATA BELONGS ON IRYS —
         </div>
       </div>
 
       <style jsx>{`
-        @keyframes scroll-left {
-          0% { transform: translateX(100%); }
-          100% { transform: translateX(-100%); }
+        @keyframes scroll {
+          from {
+            transform: translateX(100%);
+          }
+          to {
+            transform: translateX(-100%);
+          }
         }
       `}</style>
     </div>
