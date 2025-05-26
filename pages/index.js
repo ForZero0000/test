@@ -19,19 +19,15 @@ const colors = {
 };
 
 function Game2048() {
-  const [board, setBoard] = useState(createEmptyBoard());
+  const [board, setBoard] = useState(Array(size * size).fill(0));
   const [score, setScore] = useState(0);
 
   useEffect(() => {
     const newBoard = [...board];
     addRandomTile(newBoard);
     addRandomTile(newBoard);
-    setBoard(newBoard);
+    setBoard([...newBoard]);
   }, []);
-
-  function createEmptyBoard() {
-    return Array(size * size).fill(0);
-  }
 
   function addRandomTile(board) {
     const emptyIndices = board
@@ -46,75 +42,49 @@ function Game2048() {
   function handleMove(direction) {
     let newBoard = [...board];
 
-    const moveLeft = (arr) => {
-      let rowVals = arr.filter((v) => v !== 0);
-      for (let i = 0; i < rowVals.length - 1; i++) {
-        if (rowVals[i] === rowVals[i + 1]) {
-          rowVals[i] *= 2;
-          setScore((s) => s + rowVals[i]);
-          rowVals.splice(i + 1, 1);
-        }
-      }
-      while (rowVals.length < size) rowVals.push(0);
-      return rowVals;
+    const rotateLeft = (b) => {
+      const res = Array(size * size).fill(0);
+      for (let r = 0; r < size; r++)
+        for (let c = 0; c < size; c++)
+          res[(size - c - 1) * size + r] = b[r * size + c];
+      return res;
     };
 
-    if (direction === 'left') {
-      for (let row = 0; row < size; row++) {
-        let rowVals = newBoard.slice(row * size, row * size + size);
-        rowVals = moveLeft(rowVals);
-        for (let i = 0; i < size; i++) {
-          newBoard[row * size + i] = rowVals[i];
+    const rotateRight = (b) => rotateLeft(rotateLeft(rotateLeft(b)));
+    const rotateDown = (b) => rotateLeft(rotateLeft(b));
+    const processRow = (row) => {
+      const nonZero = row.filter((n) => n !== 0);
+      for (let i = 0; i < nonZero.length - 1; i++) {
+        if (nonZero[i] === nonZero[i + 1]) {
+          nonZero[i] *= 2;
+          setScore((s) => s + nonZero[i]);
+          nonZero.splice(i + 1, 1);
         }
       }
-    } else if (direction === 'right') {
-      for (let row = 0; row < size; row++) {
-        let rowVals = newBoard.slice(row * size, row * size + size).reverse();
-        rowVals = moveLeft(rowVals);
-        rowVals.reverse();
-        for (let i = 0; i < size; i++) {
-          newBoard[row * size + i] = rowVals[i];
-        }
+      while (nonZero.length < size) nonZero.push(0);
+      return nonZero;
+    };
+
+    const move = (b) => {
+      let res = [];
+      for (let i = 0; i < size; i++) {
+        const row = b.slice(i * size, i * size + size);
+        res.push(...processRow(row));
       }
-    } else if (direction === 'up') {
-      for (let col = 0; col < size; col++) {
-        let colVals = [];
-        for (let row = 0; row < size; row++) {
-          colVals.push(newBoard[row * size + col]);
-        }
-        colVals = moveLeft(colVals);
-        for (let row = 0; row < size; row++) {
-          newBoard[row * size + col] = colVals[row];
-        }
-      }
-    } else if (direction === 'down') {
-      for (let col = 0; col < size; col++) {
-        let colVals = [];
-        for (let row = 0; row < size; row++) {
-          colVals.push(newBoard[row * size + col]);
-        }
-        colVals.reverse();
-        colVals = moveLeft(colVals);
-        colVals.reverse();
-        for (let row = 0; row < size; row++) {
-          newBoard[row * size + col] = colVals[row];
-        }
-      }
-    }
+      return res;
+    };
+
+    if (direction === 'left') newBoard = move(newBoard);
+    else if (direction === 'right') newBoard = rotateLeft(move(rotateRight(newBoard)));
+    else if (direction === 'up') newBoard = rotateRight(move(rotateLeft(newBoard)));
+    else if (direction === 'down') newBoard = rotateDown(move(rotateDown(newBoard)));
 
     addRandomTile(newBoard);
     setBoard(newBoard);
   }
 
   return (
-    <div
-      style={{
-        textAlign: 'center',
-        backgroundColor: 'black',
-        padding: '1rem',
-        borderRadius: '20px',
-      }}
-    >
+    <div style={{ textAlign: 'center' }}>
       <div
         style={{
           display: 'grid',
@@ -147,21 +117,22 @@ function Game2048() {
       </div>
 
       <div style={{ marginBottom: '20px' }}>
-        {['up', 'left', 'down', 'right'].map((dir) => (
+        {['up', 'down', 'left', 'right'].map((dir) => (
           <button
             key={dir}
             onClick={() => handleMove(dir)}
             style={{
-              padding: '13px 27px',
-              borderRadius: '20px',
+              padding: '10px 20px',
+              borderRadius: '12px',
               backgroundColor: '#00BFFF',
               color: 'white',
               border: 'none',
               fontWeight: 'bold',
-              fontSize: '12px',
-              margin: '0 5px 10px 5px',
+              fontSize: '16px',
+              margin: '5px',
               cursor: 'pointer',
               userSelect: 'none',
+              width: 80,
             }}
           >
             {dir.charAt(0).toUpperCase() + dir.slice(1)}
@@ -169,32 +140,7 @@ function Game2048() {
         ))}
       </div>
 
-      <div style={{ fontWeight: 'bold', color: 'white' }}>Score: {score}</div>
-    </div>
-  );
-}
-
-function Marquee() {
-  return (
-    <div style={{ width: '100%', overflow: 'hidden', whiteSpace: 'nowrap', background: 'black', color: 'white' }}>
-      <div
-        style={{
-          display: 'inline-block',
-          animation: 'marquee 30s linear infinite',
-        }}
-      >
-        FUTURE OF ALL WOLRD DATA - THE DATA IS PROGRAMMABLE - More data. Lower cost. Greater utility - PROGAMMABLE DATA, ZERO LIMITS - DATA BELONGS ON IRYS
-      </div>
-      <style jsx>{`
-        @keyframes marquee {
-          0% {
-            transform: translateX(100%);
-          }
-          100% {
-            transform: translateX(-100%);
-          }
-        }
-      `}</style>
+      <div style={{ fontWeight: 'bold' }}>Score: {score}</div>
     </div>
   );
 }
@@ -203,79 +149,150 @@ export default function Home() {
   const [loved, setLoved] = useState(false);
 
   return (
-    <>
-      <Marquee />
+    <div
+      style={{
+        backgroundImage: 'url(/irys.png)',
+        backgroundSize: 'cover',
+        minHeight: '100vh',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'space-between',
+        padding: '1rem',
+      }}
+    >
+      {/* ВЕРХНИЙ ТЕКСТ */}
       <div
         style={{
-          backgroundImage: 'url(/irys.png)',
-          backgroundSize: 'cover',
-          minHeight: '100vh',
-          padding: '2rem',
-          boxSizing: 'border-box',
-          display: 'flex',
-          gap: '2rem',
+          backgroundColor: 'black',
+          borderRadius: '20px',
+          padding: '0.5rem',
+          overflow: 'hidden',
+          whiteSpace: 'nowrap',
+          marginBottom: '1rem',
         }}
       >
-        <div style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+        <div
+          style={{
+            display: 'inline-block',
+            animation: 'scroll 20s linear infinite',
+            fontSize: '1.5rem',
+            color: 'white',
+          }}
+        >
+          FUTURE OF ALL WOLRD DATA - THE DATA IS PROGRAMMABLE - More data. Lower cost. Greater utility - PROGAMMABLE DATA, ZERO LIMITS - DATA BELONGS ON IRYS —
+        </div>
+      </div>
+
+      <div style={{ display: 'flex', justifyContent: 'center', gap: '2rem' }}>
+        {/* ЛЕВАЯ ЧАСТЬ — ИГРА */}
+        <div>
           <Game2048 />
         </div>
 
+        {/* ПРАВАЯ ЧАСТЬ */}
         <div
           style={{
-            flex: 1,
             backgroundColor: 'black',
             borderRadius: '20px',
-            padding: '2rem',
+            padding: '1.5rem',
             color: 'white',
             display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
             alignItems: 'center',
-            justifyContent: 'space-between',
-            gap: '2rem',
+            gap: '1.2rem',
+            width: '350px',
           }}
         >
-          <div style={{ flexShrink: 0 }}>
-            <Image src="/IMG_1271 (2).webp" alt="Iryna" width={200} height={200} style={{ borderRadius: '20px' }} />
-          </div>
-
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flex: 1 }}>
+          <Image
+            src="/IMG_1271 (2).webp"
+            alt="Iryna"
+            width={140}
+            height={140}
+            style={{ borderRadius: '20px' }}
+          />
+          <div style={{ textAlign: 'center' }}>
             <input
               type="text"
-              placeholder="do you love Iryna?"
+              placeholder="Do you love Iryna?"
               style={{
-                padding: '12px 20px',
+                padding: '10px 30px',
                 borderRadius: '30px',
                 border: 'none',
-                width: '130%',
-                marginBottom: '10px',
+                width: '260px',
+                marginBottom: '0.5rem',
               }}
             />
+            <br />
             <button
               onClick={() => setLoved(true)}
               style={{
-                padding: '12px 30px',
+                padding: '10px 30px',
                 borderRadius: '30px',
                 backgroundColor: '#00BFFF',
                 color: 'white',
                 border: 'none',
                 cursor: 'pointer',
-                width: '130%',
                 fontWeight: 'bold',
-                fontSize: '16px',
               }}
             >
               Check
             </button>
-            {loved && <p style={{ fontWeight: 'bold', marginTop: '1rem', textAlign: 'center' }}>IRYNA LOVES YOU, DEAR!</p>}
+            {loved && (
+              <p style={{ fontWeight: 'bold', marginTop: '1rem' }}>
+                IRYNA LOVES YOU, DEAR!
+              </p>
+            )}
           </div>
-
-          <div style={{ flexShrink: 0 }}>
-            <a href="https://twitter.com" target="_blank" rel="noopener noreferrer">
-              <Image src="/twitter.png" alt="Twitter" width={60} height={60} style={{ borderRadius: '12px' }} />
-            </a>
-          </div>
+          <a
+            href="https://x.com/intent/post?text=THE%20DATA%20IS%20PROGRAMMABLE%20with%20%40irys_xyz%0A%0AIryna%20LOVES%20ME!%20What%20about%20you%3F"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <Image
+              src="/twitter.png"
+              alt="Twitter"
+              width={60}
+              height={60}
+              style={{ cursor: 'pointer', objectFit: 'contain' }}
+            />
+          </a>
         </div>
       </div>
-      <Marquee />
-    </>
+
+      {/* НИЖНИЙ ТЕКСТ */}
+      <div
+        style={{
+          backgroundColor: 'black',
+          borderRadius: '20px',
+          padding: '0.5rem',
+          overflow: 'hidden',
+          whiteSpace: 'nowrap',
+          marginTop: '2rem',
+        }}
+      >
+        <div
+          style={{
+            display: 'inline-block',
+            animation: 'scroll 20s linear infinite',
+            fontSize: '1.5rem',
+            color: 'white',
+          }}
+        >
+          FUTURE OF ALL WOLRD DATA - THE DATA IS PROGRAMMABLE - More data. Lower cost. Greater utility - PROGAMMABLE DATA, ZERO LIMITS - DATA BELONGS ON IRYS —
+        </div>
+      </div>
+
+      <style jsx>{`
+        @keyframes scroll {
+          from {
+            transform: translateX(100%);
+          }
+          to {
+            transform: translateX(-100%);
+          }
+        }
+      `}</style>
+    </div>
   );
 }
