@@ -113,8 +113,6 @@ function Game2048() {
         backgroundColor: 'black',
         padding: '1rem',
         borderRadius: '20px',
-        width: 'fit-content',
-        margin: '0 auto',
       }}
     >
       <div
@@ -176,104 +174,108 @@ function Game2048() {
   );
 }
 
+function Marquee() {
+  return (
+    <div style={{ width: '100%', overflow: 'hidden', whiteSpace: 'nowrap', background: 'black', color: 'white' }}>
+      <div
+        style={{
+          display: 'inline-block',
+          animation: 'marquee 30s linear infinite',
+        }}
+      >
+        FUTURE OF ALL WOLRD DATA - THE DATA IS PROGRAMMABLE - More data. Lower cost. Greater utility - PROGAMMABLE DATA, ZERO LIMITS - DATA BELONGS ON IRYS
+      </div>
+      <style jsx>{`
+        @keyframes marquee {
+          0% {
+            transform: translateX(100%);
+          }
+          100% {
+            transform: translateX(-100%);
+          }
+        }
+      `}</style>
+    </div>
+  );
+}
+
 export default function Home() {
   const [loved, setLoved] = useState(false);
 
   return (
-    <div
-      style={{
-        backgroundImage: 'url(/irys.png)',
-        backgroundSize: 'cover',
-        minHeight: '100vh',
-        padding: '2rem',
-        boxSizing: 'border-box',
-        display: 'flex',
-        gap: '2rem',
-      }}
-    >
-      {/* Левая часть */}
-      <div style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-        <Game2048 />
-      </div>
-
-      {/* Правая часть */}
+    <>
+      <Marquee />
       <div
         style={{
-          flex: 2,
-          backgroundColor: 'black',
-          borderRadius: '20px',
+          backgroundImage: 'url(/irys.png)',
+          backgroundSize: 'cover',
+          minHeight: '100vh',
           padding: '2rem',
-          color: 'white',
+          boxSizing: 'border-box',
           display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
           gap: '2rem',
         }}
       >
-        {/* Картинка */}
-        <div style={{ flexShrink: 0 }}>
-          <Image
-            src="/IMG_1271 (2).webp"
-            alt="Iryna"
-            width={300}
-            height={300}
-            style={{ borderRadius: '20px', display: 'block' }}
-          />
+        <div style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+          <Game2048 />
         </div>
 
-        {/* Поле ввода и кнопка Check */}
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', minWidth: '250px' }}>
-          <input
-            type="text"
-            placeholder="do you love Iryna?"
-            style={{
-              padding: '10px 20px',
-              borderRadius: '30px',
-              border: 'none',
-              width: '100%',
-              marginBottom: '10px',
-              boxSizing: 'border-box',
-            }}
-          />
-          <button
-            onClick={() => setLoved(true)}
-            style={{
-              padding: '10px 30px',
-              borderRadius: '30px',
-              backgroundColor: '#00BFFF',
-              color: 'white',
-              border: 'none',
-              cursor: 'pointer',
-              width: '100%',
-              fontWeight: 'bold',
-              fontSize: '16px',
-            }}
-          >
-            Check
-          </button>
-          {loved && (
-            <p style={{ fontWeight: 'bold', marginTop: '1rem', textAlign: 'center' }}>
-              IRYNA LOVES YOU, DEAR!
-            </p>
-          )}
-        </div>
+        <div
+          style={{
+            flex: 1,
+            backgroundColor: 'black',
+            borderRadius: '20px',
+            padding: '2rem',
+            color: 'white',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: '2rem',
+          }}
+        >
+          <div style={{ flexShrink: 0 }}>
+            <Image src="/IMG_1271 (2).webp" alt="Iryna" width={200} height={200} style={{ borderRadius: '20px' }} />
+          </div>
 
-        {/* Кнопка Twitter */}
-        <div style={{ flexShrink: 0 }}>
-          <a
-            href="https://twitter.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{
-              display: 'inline-block',
-              width: '120px',
-              height: '80px',
-            }}
-          >
-            <Image src="/twitter.png" alt="Twitter" width={120} height={80} style={{ borderRadius: '12px' }} />
-          </a>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flex: 1 }}>
+            <input
+              type="text"
+              placeholder="do you love Iryna?"
+              style={{
+                padding: '12px 20px',
+                borderRadius: '30px',
+                border: 'none',
+                width: '130%',
+                marginBottom: '10px',
+              }}
+            />
+            <button
+              onClick={() => setLoved(true)}
+              style={{
+                padding: '12px 30px',
+                borderRadius: '30px',
+                backgroundColor: '#00BFFF',
+                color: 'white',
+                border: 'none',
+                cursor: 'pointer',
+                width: '130%',
+                fontWeight: 'bold',
+                fontSize: '16px',
+              }}
+            >
+              Check
+            </button>
+            {loved && <p style={{ fontWeight: 'bold', marginTop: '1rem', textAlign: 'center' }}>IRYNA LOVES YOU, DEAR!</p>}
+          </div>
+
+          <div style={{ flexShrink: 0 }}>
+            <a href="https://twitter.com" target="_blank" rel="noopener noreferrer">
+              <Image src="/twitter.png" alt="Twitter" width={60} height={60} style={{ borderRadius: '12px' }} />
+            </a>
+          </div>
         </div>
       </div>
-    </div>
+      <Marquee />
+    </>
   );
 }
