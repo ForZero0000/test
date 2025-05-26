@@ -110,6 +110,11 @@ export default function Home() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [board]);
 
+  const moveWithArrow = (direction) => {
+    const { board: newBoard, moved } = move(board, direction);
+    if (moved) setBoard(spawnTile(newBoard));
+  };
+
   return (
     <div
       style={{
@@ -123,60 +128,105 @@ export default function Home() {
         padding: '60px 20px',
         fontFamily: 'Arial, sans-serif',
         flexDirection: 'column',
+        color: 'white',
+        position: 'relative'
       }}
     >
-      <h1 style={{ color: '#fff', marginBottom: '20px' }}>Do you love Irys?</h1>
+      <h1>Do you love Irys?</h1>
 
       <div style={{
-        display: 'grid',
-        gridTemplateColumns: `repeat(${SIZE}, 80px)`,
-        gap: '10px',
-        backgroundColor: '#222',
-        padding: '10px',
+        backgroundColor: 'black',
         borderRadius: '20px',
+        padding: '20px',
+        marginTop: '20px',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center'
       }}>
-        {board.map((row, i) =>
-          row.map((cell, j) => (
-            <div key={`${i}-${j}`} style={{
-              width: '80px',
-              height: '80px',
-              backgroundColor: COLOR_MAP[cell] || '#ccc',
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              fontWeight: 'bold',
-              fontSize: '24px',
-              color: '#000',
-              borderRadius: '10px',
-            }}>
-              {cell !== 0 ? cell : ''}
-            </div>
-          ))
-        )}
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: `repeat(${SIZE}, 80px)`,
+          gap: '10px',
+          backgroundColor: '#222',
+          padding: '10px',
+          borderRadius: '20px',
+        }}>
+          {board.map((row, i) =>
+            row.map((cell, j) => (
+              <div key={`${i}-${j}`} style={{
+                width: '80px',
+                height: '80px',
+                backgroundColor: COLOR_MAP[cell] || '#ccc',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                fontWeight: 'bold',
+                fontSize: '24px',
+                color: '#000',
+                borderRadius: '10px',
+              }}>
+                {cell !== 0 ? cell : ''}
+              </div>
+            ))
+          )}
+        </div>
+
+        <div style={{ marginTop: '20px', display: 'flex', gap: '10px', flexWrap: 'wrap', justifyContent: 'center' }}>
+          <button onClick={() => moveWithArrow('up')}>⬆️</button>
+          <button onClick={() => moveWithArrow('left')}>⬅️</button>
+          <button onClick={() => moveWithArrow('down')}>⬇️</button>
+          <button onClick={() => moveWithArrow('right')}>➡️</button>
+        </div>
+
+        <p style={{ color: 'white', marginTop: '20px', fontSize: '20px' }}>
+          I LOVE IRYS VERY MUCH!
+        </p>
+
+        <img
+          src="/IMG_1271 (2).webp"
+          alt="Iryna"
+          style={{ marginTop: '20px', maxWidth: '300px', borderRadius: '20px' }}
+        />
+
+        <a
+          href="https://x.com/intent/post?text=THE%20DATA%20IS%20PROGRAMMABLE%20with%20%40irys_xyz%0A%0AIryna%20LOVES%20ME!%20What%20about%20you%3F"
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{ marginTop: '20px' }}
+        >
+          <img
+            src="/twitter.png"
+            alt="Twitter Share"
+            style={{ width: '50px', height: '50px', marginTop: '10px' }}
+          />
+        </a>
       </div>
 
-      <p style={{ color: '#fff', marginTop: '20px', fontSize: '20px' }}>
-        I LOVE IRYS VERY MUCH!
-      </p>
+      <div style={{
+        position: 'absolute',
+        bottom: '0',
+        left: '0',
+        width: '100%',
+        backgroundColor: 'black',
+        color: 'white',
+        padding: '10px 0',
+        whiteSpace: 'nowrap',
+        overflow: 'hidden'
+      }}>
+        <div style={{
+          display: 'inline-block',
+          animation: 'scroll-left 20s linear infinite',
+        }}>
+          FUTURE OF ALL WORLD DATA - THE DATA IS PROGRAMMABLE - More data. Lower cost. Greater utility - PROGAMMABLE DATA, ZERO LIMITS - DATA BELONGS ON IRYS —
+        </div>
+      </div>
 
-      <img
-        src="/IMG_1271 (2).webp"
-        alt="Iryna"
-        style={{ marginTop: '30px', maxWidth: '300px', borderRadius: '20px' }}
-      />
-
-      <a
-        href="https://x.com/intent/post?text=THE%20DATA%20IS%20PROGRAMMABLE%20with%20%40irys_xyz%0A%0AIryna%20LOVES%20ME!%20What%20about%20you%3F"
-        target="_blank"
-        rel="noopener noreferrer"
-        style={{ marginTop: '20px' }}
-      >
-        <img
-          src="/twitter.png"
-          alt="Twitter Share"
-          style={{ width: '50px', height: '50px', marginTop: '10px' }}
-        />
-      </a>
+      <style jsx>{`
+        @keyframes scroll-left {
+          0% { transform: translateX(100%); }
+          100% { transform: translateX(-100%); }
+        }
+      `}</style>
     </div>
   );
 }
