@@ -9,7 +9,6 @@ export default function Home() {
       setResult('Пожалуйста, введите ник.');
       return;
     }
-    // 50/50 шанс
     const love = Math.random() < 0.5;
     setResult(
       love
@@ -21,62 +20,108 @@ export default function Home() {
   return (
     <div
       style={{
-        backgroundColor: '#00BFFF', // голубой фон
+        backgroundColor: '#00BFFF',
         height: '100vh',
         display: 'flex',
-        flexDirection: 'column',
         justifyContent: 'center',
         alignItems: 'center',
-        color: 'white',
+        padding: '0 40px',
         fontFamily: 'Arial, sans-serif',
-        padding: '0 20px',
-        textAlign: 'center',
+        color: 'white',
       }}
     >
-      <h1>Irys Love Checker</h1>
-      <p>Проверка на Sybil от Irys</p>
-
-      <input
-        type="text"
-        placeholder="Введите ваш ник"
-        value={nickname}
-        onChange={(e) => setNickname(e.target.value)}
+      {/* Левая часть: ввод и кнопка */}
+      <div
         style={{
-          borderRadius: '30px',
-          padding: '10px 20px',
-          border: 'none',
-          width: '250px',
-          fontSize: '16px',
-          marginTop: '20px',
-          outline: 'none',
+          flex: '1',
+          maxWidth: '400px',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'flex-start',
+          marginRight: '40px',
+          transform: 'translateX(50px)', // сдвигаем чуть правее
         }}
-      />
-
-      <button
-        onClick={checkLove}
-        style={{
-          marginTop: '15px',
-          padding: '10px 25px',
-          borderRadius: '30px',
-          border: 'none',
-          backgroundColor: 'white',
-          color: '#00BFFF',
-          fontWeight: 'bold',
-          cursor: 'pointer',
-          fontSize: '16px',
-          transition: 'background-color 0.3s ease',
-        }}
-        onMouseOver={(e) => (e.currentTarget.style.backgroundColor = '#e0f7ff')}
-        onMouseOut={(e) => (e.currentTarget.style.backgroundColor = 'white')}
       >
-        Проверить
-      </button>
+        <h1 style={{ marginBottom: '10px' }}>Irys Love Checker</h1>
+        <p>Проверка на Sybil от Irys</p>
 
-      {result && (
-        <p style={{ marginTop: '25px', fontSize: '20px', fontWeight: 'bold' }}>
-          {result}
-        </p>
-      )}
+        <input
+          type="text"
+          placeholder="Введите ваш ник"
+          value={nickname}
+          onChange={(e) => setNickname(e.target.value)}
+          style={{
+            borderRadius: '30px',
+            padding: '10px 20px',
+            border: 'none',
+            width: '100%',
+            fontSize: '16px',
+            marginTop: '20px',
+            outline: 'none',
+          }}
+        />
+
+        <button
+          onClick={checkLove}
+          style={{
+            marginTop: '15px',
+            padding: '12px 30px',
+            borderRadius: '30px',
+            border: '2px solid white',
+            backgroundColor: 'transparent',
+            color: 'white',
+            fontWeight: 'bold',
+            cursor: 'pointer',
+            fontSize: '16px',
+            transition: 'background-color 0.3s, color 0.3s',
+            userSelect: 'none',
+          }}
+          onMouseOver={(e) => {
+            e.currentTarget.style.backgroundColor = 'white';
+            e.currentTarget.style.color = '#00BFFF';
+          }}
+          onMouseOut={(e) => {
+            e.currentTarget.style.backgroundColor = 'transparent';
+            e.currentTarget.style.color = 'white';
+          }}
+        >
+          Check
+        </button>
+
+        {result && (
+          <p
+            style={{
+              marginTop: '25px',
+              fontSize: '20px',
+              fontWeight: 'bold',
+              color: 'white',
+            }}
+          >
+            {result}
+          </p>
+        )}
+      </div>
+
+      {/* Правая часть: фотография */}
+      <div
+        style={{
+          flex: '1',
+          maxWidth: '400px',
+          display: 'flex',
+          justifyContent: 'center',
+        }}
+      >
+        <img
+          src="/IMG_1271 (2).webp"
+          alt="Irina"
+          style={{
+            borderRadius: '20px',
+            maxWidth: '100%',
+            height: 'auto',
+            boxShadow: '0 4px 15px rgba(0,0,0,0.3)',
+          }}
+        />
+      </div>
     </div>
   );
 }
