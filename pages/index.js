@@ -3,12 +3,11 @@ import { useState, useEffect } from 'react';
 
 const size = 4;
 
-// Цвета плиток от желтого (2) к голубому (2048)
 const colors = {
   0: '#eee4da',
-  2: '#fffde7',   // очень светлый желтый
-  4: '#fff176',   // желтый
-  8: '#64b5f6',   // голубой
+  2: '#fffde7',
+  4: '#fff176',
+  8: '#64b5f6',
   16: '#42a5f5',
   32: '#2196f3',
   64: '#1e88e5',
@@ -16,7 +15,7 @@ const colors = {
   256: '#1565c0',
   512: '#0d47a1',
   1024: '#90caf9',
-  2048: '#64b5f6', // голубой
+  2048: '#64b5f6',
 };
 
 function Game2048() {
@@ -24,9 +23,10 @@ function Game2048() {
   const [score, setScore] = useState(0);
 
   useEffect(() => {
-    addRandomTile(board);
-    addRandomTile(board);
-    setBoard([...board]);
+    const newBoard = [...board];
+    addRandomTile(newBoard);
+    addRandomTile(newBoard);
+    setBoard(newBoard);
   }, []);
 
   function createEmptyBoard() {
@@ -154,7 +154,7 @@ function Game2048() {
             key={dir}
             onClick={() => handleMove(dir)}
             style={{
-              padding: '13px 27px', // уменьшенный размер
+              padding: '13px 27px',
               borderRadius: '20px',
               backgroundColor: '#00BFFF',
               color: 'white',
@@ -191,12 +191,12 @@ export default function Home() {
         gap: '2rem',
       }}
     >
-      {/* Левая часть - игра 2048 (1/3 ширины) */}
+      {/* Левая часть */}
       <div style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
         <Game2048 />
       </div>
 
-      {/* Правая часть - черный блок (2/3 ширины) с контентом */}
+      {/* Правая часть */}
       <div
         style={{
           flex: 2,
@@ -210,7 +210,7 @@ export default function Home() {
           gap: '2rem',
         }}
       >
-        {/* Картинка Iryna слева */}
+        {/* Картинка */}
         <div style={{ flexShrink: 0 }}>
           <Image
             src="/IMG_1271 (2).webp"
@@ -221,7 +221,7 @@ export default function Home() {
           />
         </div>
 
-        {/* Центр: поле ввода и кнопка Check (вертикально) */}
+        {/* Поле ввода и кнопка Check */}
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', minWidth: '250px' }}>
           <input
             type="text"
@@ -255,3 +255,25 @@ export default function Home() {
             <p style={{ fontWeight: 'bold', marginTop: '1rem', textAlign: 'center' }}>
               IRYNA LOVES YOU, DEAR!
             </p>
+          )}
+        </div>
+
+        {/* Кнопка Twitter */}
+        <div style={{ flexShrink: 0 }}>
+          <a
+            href="https://twitter.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              display: 'inline-block',
+              width: '120px',
+              height: '80px',
+            }}
+          >
+            <Image src="/twitter.png" alt="Twitter" width={120} height={80} style={{ borderRadius: '12px' }} />
+          </a>
+        </div>
+      </div>
+    </div>
+  );
+}
