@@ -3,12 +3,11 @@ import { useState, useEffect } from 'react';
 
 const size = 4;
 
-// Цвета плиток от желтого (2) к голубому (2048)
 const colors = {
   0: '#eee4da',
-  2: '#fffde7',   // очень светлый желтый
-  4: '#fff176',   // желтый
-  8: '#64b5f6',   // голубой
+  2: '#fffde7',
+  4: '#fff176',
+  8: '#64b5f6',
   16: '#42a5f5',
   32: '#2196f3',
   64: '#1e88e5',
@@ -16,7 +15,7 @@ const colors = {
   256: '#1565c0',
   512: '#0d47a1',
   1024: '#90caf9',
-  2048: '#64b5f6', // голубой
+  2048: '#64b5f6',
 };
 
 function Game2048() {
@@ -64,7 +63,6 @@ function Game2048() {
         }
       }
     }
-    // Можно добавить реализацию для up, right, down
 
     addRandomTile(newBoard);
     setBoard(newBoard);
@@ -107,24 +105,23 @@ function Game2048() {
         <button
           onClick={() => handleMove('left')}
           style={{
-            padding: '20px 40px',
-            borderRadius: '20px',
+            padding: '40px 80px',
+            borderRadius: '40px',
             backgroundColor: '#00BFFF',
             color: 'white',
             border: 'none',
             fontWeight: 'bold',
-            fontSize: '18px',
+            fontSize: '36px',
             margin: '0 10px',
             cursor: 'pointer',
             userSelect: 'none',
           }}
         >
-          Left
+          ←
         </button>
-        {/* Здесь можно добавить Right, Up, Down кнопки */}
       </div>
 
-      <div style={{ fontWeight: 'bold' }}>Score: {score}</div>
+      <div style={{ fontWeight: 'bold', fontSize: '24px' }}>Score: {score}</div>
     </div>
   );
 }
@@ -145,7 +142,6 @@ export default function Home() {
         justifyContent: 'space-between',
       }}
     >
-      {/* Черный закругленный блок с текстом и фото */}
       <div
         style={{
           display: 'flex',
@@ -177,25 +173,43 @@ export default function Home() {
               color: 'white',
               border: 'none',
               cursor: 'pointer',
+              marginTop: '10px',
             }}
           >
             Check
           </button>
+
+          <div style={{ marginTop: '1rem' }}>
+            <a
+              href="https://x.com/intent/post?text=THE%20DATA%20IS%20PROGRAMMABLE%20with%20%40irys_xyz%0A%0AIryna%20LOVES%20ME!%20What%20about%20you%3F"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Image
+                src="/twitter.png"
+                alt="Twitter"
+                width={40}
+                height={40}
+                style={{ cursor: 'pointer' }}
+              />
+            </a>
+          </div>
+
           {loved && (
             <p style={{ fontWeight: 'bold', marginTop: '1rem' }}>
               IRYNA LOVES YOU, DEAR!
             </p>
           )}
         </div>
+
         <div style={{ flexShrink: 0, marginLeft: '2rem' }}>
-          <Image src="/IMG_1271 (2).webp" alt="Iryna" width={300} height={400} style={{ borderRadius: '20px' }} />
-          <a
-            href="https://x.com/intent/post?text=THE%20DATA%20IS%20PROGRAMMABLE%20with%20%40irys_xyz%0A%0AIryna%20LOVES%20ME!%20What%20about%20you%3F"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image src="/twitter.png" alt="Twitter" width={40} height={40} style={{ marginTop: '1rem', cursor: 'pointer' }} />
-          </a>
+          <Image
+            src="/IMG_1271 (2).webp"
+            alt="Iryna"
+            width={300}
+            height={400}
+            style={{ borderRadius: '20px' }}
+          />
         </div>
       </div>
 
@@ -217,11 +231,11 @@ export default function Home() {
           style={{
             display: 'inline-block',
             animation: 'scroll 20s linear infinite',
-            fontSize: '3rem', // Увеличенный шрифт
+            fontSize: '3rem',
             color: 'white',
           }}
         >
-          FUTURE OF ALL WOLRD DATA - THE DATA IS PROGRAMMABLE - More data. Lower cost. Greater utility - PROGAMMABLE DATA, ZERO LIMITS - DATA BELONGS ON IRYS —
+          FUTURE OF ALL WORLD DATA — THE DATA IS PROGRAMMABLE — More data. Lower cost. Greater utility — PROGRAMMABLE DATA, ZERO LIMITS — DATA BELONGS ON IRYS —
         </div>
       </div>
 
