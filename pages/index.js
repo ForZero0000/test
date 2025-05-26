@@ -75,7 +75,7 @@ function Game2048() {
       <div
         style={{
           display: 'grid',
-          gridTemplateColumns: repeat(${size}, 80px),
+          gridTemplateColumns: `repeat(${size}, 80px)`,
           gap: '10px',
           justifyContent: 'center',
           marginBottom: '20px',
@@ -188,7 +188,7 @@ export default function Home() {
           )}
         </div>
         <div style={{ flexShrink: 0, marginLeft: '2rem' }}>
-          <Image src="/IMG_1271 (2).webp" alt="Iryna" width={300} height={400} style={{ borderRadius: '20px' }} />
+          <Image src="/IMG_1271 (2).webp" alt="Iryna" width={300} height={300} style={{ borderRadius: '20px' }} />
           <a
             href="https://x.com/intent/post?text=THE%20DATA%20IS%20PROGRAMMABLE%20with%20%40irys_xyz%0A%0AIryna%20LOVES%20ME!%20What%20about%20you%3F"
             target="_blank"
@@ -225,7 +225,7 @@ export default function Home() {
         </div>
       </div>
 
-      <style jsx>{
+      <style jsx>{`
         @keyframes scroll {
           from {
             transform: translateX(100%);
@@ -234,7 +234,7 @@ export default function Home() {
             transform: translateX(-100%);
           }
         }
-      }</style>
+      `}</style>
     </div>
   );
 }
