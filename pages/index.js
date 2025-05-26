@@ -18,17 +18,7 @@ const colors = {
   2048: '#64b5f6',
 };
 
-function Game2048() {
-  const [board, setBoard] = useState(Array(size * size).fill(0));
-  const [score, setScore] = useState(0);
-
-  useEffect(() => {
-    const newBoard = [...board];
-    addRandomTile(newBoard);
-    addRandomTile(newBoard);
-    setBoard([...newBoard]);
-  }, []);
-
+function Game2048({ score, setScore, board, setBoard }) {
   function addRandomTile(board) {
     const emptyIndices = board
       .map((val, idx) => (val === 0 ? idx : null))
@@ -38,6 +28,13 @@ function Game2048() {
     board[randIndex] = Math.random() < 0.9 ? 2 : 4;
     return true;
   }
+
+  useEffect(() => {
+    const newBoard = [...board];
+    addRandomTile(newBoard);
+    addRandomTile(newBoard);
+    setBoard([...newBoard]);
+  }, []);
 
   function handleMove(direction) {
     let newBoard = [...board];
@@ -147,6 +144,8 @@ function Game2048() {
 
 export default function Home() {
   const [loved, setLoved] = useState(false);
+  const [board, setBoard] = useState(Array(size * size).fill(0));
+  const [score, setScore] = useState(0);
 
   return (
     <div
@@ -160,36 +159,33 @@ export default function Home() {
         padding: '1rem',
       }}
     >
-      {/* ВЕРХНИЙ ТЕКСТ */}
-      <div
-        style={{
-          backgroundColor: 'black',
-          borderRadius: '20px',
-          padding: '0.5rem',
-          overflow: 'hidden',
-          whiteSpace: 'nowrap',
-          marginBottom: '1rem',
-        }}
-      >
-        <div
-          style={{
-            display: 'inline-block',
-            animation: 'scroll 20s linear infinite',
-            fontSize: '1.5rem',
-            color: 'white',
-          }}
-        >
+      {/* Верхний бегущий текст */}
+      <div style={tickerStyle}>
+        <div style={tickerInnerStyle}>
           FUTURE OF ALL WOLRD DATA - THE DATA IS PROGRAMMABLE - More data. Lower cost. Greater utility - PROGAMMABLE DATA, ZERO LIMITS - DATA BELONGS ON IRYS —
         </div>
       </div>
 
       <div style={{ display: 'flex', justifyContent: 'center', gap: '2rem' }}>
-        {/* ЛЕВАЯ ЧАСТЬ — ИГРА */}
-        <div>
-          <Game2048 />
+        {/* Левая часть с чёрным фоном */}
+        <div
+          style={{
+            backgroundColor: 'black',
+            borderRadius: '20px',
+            padding: '1.5rem',
+            color: 'white',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'center',
+            gap: '1rem',
+            width: '350px',
+          }}
+        >
+          <Game2048 score={score} setScore={setScore} board={board} setBoard={setBoard} />
         </div>
 
-        {/* ПРАВАЯ ЧАСТЬ */}
+        {/* Правая часть */}
         <div
           style={{
             backgroundColor: 'black',
@@ -260,25 +256,9 @@ export default function Home() {
         </div>
       </div>
 
-      {/* НИЖНИЙ ТЕКСТ */}
-      <div
-        style={{
-          backgroundColor: 'black',
-          borderRadius: '20px',
-          padding: '0.5rem',
-          overflow: 'hidden',
-          whiteSpace: 'nowrap',
-          marginTop: '2rem',
-        }}
-      >
-        <div
-          style={{
-            display: 'inline-block',
-            animation: 'scroll 20s linear infinite',
-            fontSize: '1.5rem',
-            color: 'white',
-          }}
-        >
+      {/* Нижний бегущий текст */}
+      <div style={tickerStyle}>
+        <div style={tickerInnerStyle}>
           FUTURE OF ALL WOLRD DATA - THE DATA IS PROGRAMMABLE - More data. Lower cost. Greater utility - PROGAMMABLE DATA, ZERO LIMITS - DATA BELONGS ON IRYS —
         </div>
       </div>
@@ -296,3 +276,19 @@ export default function Home() {
     </div>
   );
 }
+
+const tickerStyle = {
+  backgroundColor: 'black',
+  borderRadius: '20px',
+  padding: '0.5rem',
+  overflow: 'hidden',
+  whiteSpace: 'nowrap',
+  margin: '1rem 0',
+};
+
+const tickerInnerStyle = {
+  display: 'inline-block',
+  animation: 'scroll 20s linear infinite',
+  fontSize: '1.5rem',
+  color: 'white',
+};
