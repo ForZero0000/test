@@ -32,7 +32,7 @@ export default function Home() {
         fontFamily: 'Arial, sans-serif',
       }}
     >
-      {/* Чёрный закруглённый блок */}
+      {/* Чёрный блок */}
       <div
         style={{
           backgroundColor: 'black',
@@ -46,9 +46,10 @@ export default function Home() {
           width: '100%',
           flexWrap: 'wrap',
           justifyContent: 'space-between',
+          zIndex: 2,
         }}
       >
-        {/* Левая часть — текст и кнопка */}
+        {/* Текст и форма */}
         <div
           style={{
             flex: '1',
@@ -57,7 +58,6 @@ export default function Home() {
           }}
         >
           <h1>Irys Love Checker</h1>
-          <p>Проверка на Sybil от Irys</p>
 
           <input
             type="text"
@@ -68,18 +68,20 @@ export default function Home() {
               borderRadius: '30px',
               padding: '10px 20px',
               border: 'none',
-              width: '100%',
+              width: '50%', // уже поле
               fontSize: '16px',
               marginTop: '20px',
               outline: 'none',
             }}
           />
 
+          <br />
+
           <button
             onClick={checkLove}
             style={{
               marginTop: '15px',
-              padding: '12px 15px', // в 2 раза уже
+              padding: '12px 15px', // уже кнопка
               borderRadius: '30px',
               border: '2px solid white',
               backgroundColor: 'transparent',
@@ -115,7 +117,7 @@ export default function Home() {
           )}
         </div>
 
-        {/* Правая часть — фото */}
+        {/* Фото */}
         <div style={{ flex: '1', minWidth: '300px', textAlign: 'center' }}>
           <img
             src="/IMG_1271 (2).webp"
@@ -138,6 +140,7 @@ export default function Home() {
           width: '100%',
           overflow: 'hidden',
           whiteSpace: 'nowrap',
+          zIndex: 1,
         }}
       >
         <div
@@ -153,7 +156,6 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Анимация */}
       <style jsx>{`
         @keyframes marquee {
           0% {
