@@ -23,38 +23,39 @@ function Game2048() {
   const [score, setScore] = useState(0);
 
   useEffect(() => {
-    addRandomTile(board);
-    addRandomTile(board);
-    setBoard([...board]);
+    const newBoard = [...board];
+    addRandomTile(newBoard);
+    addRandomTile(newBoard);
+    setBoard(newBoard);
   }, []);
 
   function createEmptyBoard() {
     return Array(size * size).fill(0);
   }
 
-  function addRandomTile(board: number[]) {
+  function addRandomTile(board) {
     const emptyIndices = board
       .map((val, idx) => (val === 0 ? idx : null))
-      .filter((val) => val !== null) as number[];
+      .filter((val) => val !== null);
     if (emptyIndices.length === 0) return false;
     const randIndex = emptyIndices[Math.floor(Math.random() * emptyIndices.length)];
     board[randIndex] = Math.random() < 0.9 ? 2 : 4;
     return true;
   }
 
-  function handleMove(direction: string) {
+  function handleMove(direction) {
     let newBoard = [...board];
 
-    function getTile(r: number, c: number) {
+    function getTile(r, c) {
       return newBoard[r * size + c];
     }
 
-    function setTile(r: number, c: number, val: number) {
+    function setTile(r, c, val) {
       newBoard[r * size + c] = val;
     }
 
     for (let i = 0; i < size; i++) {
-      let line: number[] = [];
+      let line = [];
       for (let j = 0; j < size; j++) {
         let val;
         if (direction === 'left') val = getTile(i, j);
@@ -163,7 +164,6 @@ export default function Home() {
         alignItems: 'flex-end',
       }}
     >
-      {/* Ввод, кнопка и изображение — компактный блок */}
       <div
         style={{
           display: 'flex',
