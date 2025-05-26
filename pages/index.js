@@ -3,11 +3,12 @@ import { useState, useEffect } from 'react';
 
 const size = 4;
 
+// Цвета плиток от желтого (2) к голубому (2048)
 const colors = {
   0: '#eee4da',
-  2: '#fffde7',
-  4: '#fff176',
-  8: '#64b5f6',
+  2: '#fffde7',   // очень светлый желтый
+  4: '#fff176',   // желтый
+  8: '#64b5f6',   // голубой
   16: '#42a5f5',
   32: '#2196f3',
   64: '#1e88e5',
@@ -15,7 +16,7 @@ const colors = {
   256: '#1565c0',
   512: '#0d47a1',
   1024: '#90caf9',
-  2048: '#64b5f6',
+  2048: '#64b5f6', // голубой
 };
 
 function Game2048() {
@@ -23,10 +24,9 @@ function Game2048() {
   const [score, setScore] = useState(0);
 
   useEffect(() => {
-    const newBoard = [...board];
-    addRandomTile(newBoard);
-    addRandomTile(newBoard);
-    setBoard(newBoard);
+    addRandomTile(board);
+    addRandomTile(board);
+    setBoard([...board]);
   }, []);
 
   function createEmptyBoard() {
@@ -46,41 +46,60 @@ function Game2048() {
   function handleMove(direction) {
     let newBoard = [...board];
 
-    function getTile(r, c) {
-      return newBoard[r * size + c];
-    }
-
-    function setTile(r, c, val) {
-      newBoard[r * size + c] = val;
-    }
-
-    for (let i = 0; i < size; i++) {
-      let line = [];
-      for (let j = 0; j < size; j++) {
-        let val;
-        if (direction === 'left') val = getTile(i, j);
-        if (direction === 'right') val = getTile(i, size - 1 - j);
-        if (direction === 'up') val = getTile(j, i);
-        if (direction === 'down') val = getTile(size - 1 - j, i);
-        if (val !== 0) line.push(val);
-      }
-
-      for (let k = 0; k < line.length - 1; k++) {
-        if (line[k] === line[k + 1]) {
-          line[k] *= 2;
-          setScore((s) => s + line[k]);
-          line.splice(k + 1, 1);
+    // Обработка сдвига в разных направлениях
+    const moveLeft = (arr) => {
+      let rowVals = arr.filter((v) => v !== 0);
+      for (let i = 0; i < rowVals.length - 1; i++) {
+        if (rowVals[i] === rowVals[i + 1]) {
+          rowVals[i] *= 2;
+          setScore((s) => s + rowVals[i]);
+          rowVals.splice(i + 1, 1);
         }
       }
+      while (rowVals.length < size) rowVals.push(0);
+      return rowVals;
+    };
 
-      while (line.length < size) line.push(0);
-
-      for (let j = 0; j < size; j++) {
-        let val = line[j];
-        if (direction === 'left') setTile(i, j, val);
-        if (direction === 'right') setTile(i, size - 1 - j, val);
-        if (direction === 'up') setTile(j, i, val);
-        if (direction === 'down') setTile(size - 1 - j, i, val);
+    if (direction === 'left') {
+      for (let row = 0; row < size; row++) {
+        let rowVals = newBoard.slice(row * size, row * size + size);
+        rowVals = moveLeft(rowVals);
+        for (let i = 0; i < size; i++) {
+          newBoard[row * size + i] = rowVals[i];
+        }
+      }
+    } else if (direction === 'right') {
+      for (let row = 0; row < size; row++) {
+        let rowVals = newBoard.slice(row * size, row * size + size).reverse();
+        rowVals = moveLeft(rowVals);
+        rowVals.reverse();
+        for (let i = 0; i < size; i++) {
+          newBoard[row * size + i] = rowVals[i];
+        }
+      }
+    } else if (direction === 'up') {
+      for (let col = 0; col < size; col++) {
+        let colVals = [];
+        for (let row = 0; row < size; row++) {
+          colVals.push(newBoard[row * size + col]);
+        }
+        colVals = moveLeft(colVals);
+        for (let row = 0; row < size; row++) {
+          newBoard[row * size + col] = colVals[row];
+        }
+      }
+    } else if (direction === 'down') {
+      for (let col = 0; col < size; col++) {
+        let colVals = [];
+        for (let row = 0; row < size; row++) {
+          colVals.push(newBoard[row * size + col]);
+        }
+        colVals.reverse();
+        colVals = moveLeft(colVals);
+        colVals.reverse();
+        for (let row = 0; row < size; row++) {
+          newBoard[row * size + col] = colVals[row];
+        }
       }
     }
 
@@ -88,21 +107,17 @@ function Game2048() {
     setBoard(newBoard);
   }
 
-  const buttonStyle = {
-    padding: '13px 26px',
-    borderRadius: '20px',
-    backgroundColor: '#00BFFF',
-    color: 'white',
-    border: 'none',
-    fontWeight: 'bold',
-    fontSize: '14px',
-    margin: '10px',
-    cursor: 'pointer',
-    userSelect: 'none',
-  };
-
   return (
-    <div style={{ textAlign: 'center', backgroundColor: 'black', padding: '2rem', borderRadius: '20px', width: 'fit-content', margin: '0 auto' }}>
+    <div
+      style={{
+        textAlign: 'center',
+        backgroundColor: 'black',
+        padding: '1rem',
+        borderRadius: '20px',
+        width: 'fit-content',
+        margin: '0 auto',
+      }}
+    >
       <div
         style={{
           display: 'grid',
@@ -134,16 +149,30 @@ function Game2048() {
         ))}
       </div>
 
-      <div style={{ marginBottom: '10px' }}>
-        <button onClick={() => handleMove('up')} style={buttonStyle}>Up</button>
-      </div>
-      <div>
-        <button onClick={() => handleMove('left')} style={buttonStyle}>Left</button>
-        <button onClick={() => handleMove('down')} style={buttonStyle}>Down</button>
-        <button onClick={() => handleMove('right')} style={buttonStyle}>Right</button>
+      <div style={{ marginBottom: '20px' }}>
+        {['up', 'left', 'down', 'right'].map((dir) => (
+          <button
+            key={dir}
+            onClick={() => handleMove(dir)}
+            style={{
+              padding: '13px 27px', // уменьшил в 1.5 раза
+              borderRadius: '20px',
+              backgroundColor: '#00BFFF',
+              color: 'white',
+              border: 'none',
+              fontWeight: 'bold',
+              fontSize: '12px',
+              margin: '0 5px 10px 5px',
+              cursor: 'pointer',
+              userSelect: 'none',
+            }}
+          >
+            {dir.charAt(0).toUpperCase() + dir.slice(1)}
+          </button>
+        ))}
       </div>
 
-      <div style={{ fontWeight: 'bold', marginTop: '1rem', color: 'white' }}>Score: {score}</div>
+      <div style={{ fontWeight: 'bold', color: 'white' }}>Score: {score}</div>
     </div>
   );
 }
@@ -160,23 +189,32 @@ export default function Home() {
         padding: '2rem',
         boxSizing: 'border-box',
         display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'flex-end',
+        gap: '2rem',
       }}
     >
+      {/* Левая часть - игра 2048 (1/3 ширины) */}
+      <div style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+        <Game2048 />
+      </div>
+
+      {/* Правая часть - черный блок (2/3 ширины) с контентом */}
       <div
         style={{
-          display: 'flex',
+          flex: 2,
           backgroundColor: 'black',
           borderRadius: '20px',
-          padding: '1.5rem',
+          padding: '2rem',
           color: 'white',
-          alignItems: 'center',
-          maxWidth: '650px',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'flex-end',
+          justifyContent: 'center',
+          gap: '1rem',
+          minWidth: 0,
         }}
       >
-        <Image src="/IMG_1271 (2).webp" alt="Iryna" width={150} height={150} style={{ borderRadius: '20px', marginRight: '2rem' }} />
-        <div style={{ flex: 1 }}>
+        {/* Верхний блок с input, кнопкой, твиттером */}
+        <div style={{ width: '100%', maxWidth: '400px', textAlign: 'right' }}>
           <input
             type="text"
             placeholder="do you love Iryna?"
@@ -184,84 +222,54 @@ export default function Home() {
               padding: '10px 20px',
               borderRadius: '30px',
               border: 'none',
-              marginBottom: '0.5rem',
               width: '100%',
-              maxWidth: '250px',
+              boxSizing: 'border-box',
+              marginBottom: '0.5rem',
             }}
           />
-          <div style={{ marginTop: '0.5rem' }}>
-            <button
-              onClick={() => setLoved(true)}
-              style={{
-                padding: '10px 30px',
-                borderRadius: '30px',
-                backgroundColor: '#00BFFF',
-                color: 'white',
-                border: 'none',
-                cursor: 'pointer',
-              }}
-            >
-              Check
-            </button>
-          </div>
+          <button
+            onClick={() => setLoved(true)}
+            style={{
+              padding: '10px 30px',
+              borderRadius: '30px',
+              backgroundColor: '#00BFFF',
+              color: 'white',
+              border: 'none',
+              cursor: 'pointer',
+              width: '100%',
+              marginBottom: '0.5rem',
+            }}
+          >
+            Check
+          </button>
+
+          <a
+            href="https://x.com/intent/post?text=THE%20DATA%20IS%20PROGRAMMABLE%20with%20%40irys_xyz%0A%0AIryna%20LOVES%20ME!%20What%20about%20you%3F"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ display: 'inline-block', cursor: 'pointer' }}
+          >
+            <Image src="/twitter.png" alt="Twitter" width={40} height={40} />
+          </a>
+
           {loved && (
             <p style={{ fontWeight: 'bold', marginTop: '1rem' }}>
               IRYNA LOVES YOU, DEAR!
             </p>
           )}
-          <a
-            href="https://x.com/intent/post?text=THE%20DATA%20IS%20PROGRAMMABLE%20with%20%40irys_xyz%0A%0AIryna%20LOVES%20ME!%20What%20about%20you%3F"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              src="/twitter.png"
-              alt="Twitter"
-              width={40}
-              height={40}
-              style={{ marginTop: '1rem', cursor: 'pointer' }}
-            />
-          </a>
+        </div>
+
+        {/* Картинка Iryna справа */}
+        <div style={{ marginTop: 'auto', maxWidth: '400px', width: '100%' }}>
+          <Image
+            src="/IMG_1271 (2).webp"
+            alt="Iryna"
+            width={300}
+            height={300}
+            style={{ borderRadius: '20px', display: 'block', marginLeft: 'auto' }}
+          />
         </div>
       </div>
-
-      <div style={{ marginTop: '3rem' }}>
-        <Game2048 />
-      </div>
-
-      <div
-        style={{
-          backgroundColor: 'black',
-          borderRadius: '20px',
-          padding: '1rem',
-          marginTop: '3rem',
-          overflow: 'hidden',
-          whiteSpace: 'nowrap',
-          maxWidth: '90%',
-        }}
-      >
-        <div
-          style={{
-            display: 'inline-block',
-            animation: 'scroll 20s linear infinite',
-            fontSize: '2rem',
-            color: 'white',
-          }}
-        >
-          FUTURE OF ALL WORLD DATA - THE DATA IS PROGRAMMABLE - More data. Lower cost. Greater utility - PROGAMMABLE DATA, ZERO LIMITS - DATA BELONGS ON IRYS —
-        </div>
-      </div>
-
-      <style jsx>{`
-        @keyframes scroll {
-          from {
-            transform: translateX(100%);
-          }
-          to {
-            transform: translateX(-100%);
-          }
-        }
-      `}</style>
     </div>
   );
 }
