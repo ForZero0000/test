@@ -56,7 +56,8 @@ export default function Home() {
           margin: 0;
           padding: 0;
           overflow-x: hidden;
-          background: url('/irys.png') center center / cover no-repeat fixed;
+          /* Фон на весь экран, но сужен по ширине (auto ширина, 100% высота) */
+          background: url('/irys.png') center center / auto 100% no-repeat fixed;
           font-family: Arial, sans-serif;
           color: white;
           background-attachment: fixed;
@@ -177,6 +178,7 @@ export default function Home() {
           user-select: none;
           filter: drop-shadow(0 0 1px #000);
         }
+
         /* Бегущий текст слева направо */
         .ticker-container {
           position: fixed;
@@ -199,7 +201,7 @@ export default function Home() {
           color: #00acee;
           user-select: none;
           font-family: system-ui, sans-serif;
-          animation: tickerMove 20s linear infinite;
+          animation: tickerMove 40s linear infinite; /* скорость уменьшена в 2 раза */
           padding-left: 0;
           margin-left: -100%;
         }
