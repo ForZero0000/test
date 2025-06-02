@@ -87,12 +87,14 @@ export default function Home() {
           color: white;
         }
         h1 {
-          font-family: system-ui, sans-serif;
-          font-weight: 400;
-          color: #00bfff;
-          background-color: black;
-          padding: 10px 0;
           margin: 0 0 20px;
+          user-select: none;
+        }
+        .gif-title {
+          display: block;
+          margin: 0 auto 20px;
+          max-width: 280px;
+          width: 100%;
           user-select: none;
         }
         .game-container {
@@ -104,6 +106,10 @@ export default function Home() {
           background: black;
           border-radius: 12px;
           flex-grow: 1;
+          box-sizing: border-box;
+        }
+        .card, .card-inner, .card-front, .card-back {
+          box-sizing: border-box;
         }
         .card {
           width: 140px;
@@ -115,6 +121,10 @@ export default function Home() {
           will-change: transform;
           background: black;
           border-radius: 14px;
+          margin: 0;
+          padding: 0;
+          border: none;
+          outline: none;
         }
         .card-inner {
           position: relative;
@@ -125,6 +135,7 @@ export default function Home() {
           border-radius: 14px;
           box-shadow: 0 0 14px rgba(0, 0, 0, 0.9);
           background: black;
+          backface-visibility: hidden;
         }
         .card.flipped .card-inner {
           transform: rotateY(180deg);
@@ -135,12 +146,11 @@ export default function Home() {
           width: 100%;
           height: 100%;
           border-radius: 14px;
-          backface-visibility: hidden;
           background: black;
+          backface-visibility: hidden;
         }
         .card-front {
           background: url('/cdpcRzVY_400x400 (8).jpg') center center / cover no-repeat;
-          background-color: black;
           box-shadow: inset 0 0 8px #000;
         }
         .card-back {
@@ -243,7 +253,8 @@ export default function Home() {
       </div>
 
       <div className="container" role="main">
-        <h1>CHOOSE YOUR LOVE IRYSIAN</h1>
+        {/* gif вместо заголовка */}
+        <img src="/gifirys.gif" alt="Choose Your Love Irysian" className="gif-title" draggable={false} />
 
         <div className="game-container">
           {shuffledCards.map((img, i) => (
@@ -273,7 +284,7 @@ export default function Home() {
           <div id="result" role="status" aria-live="polite">
             <div className="share-text">SHARE YOUR LOVE RIGHT NOW</div>
             <a
-              href={`https://twitter.com/intent/tweet?text=${tweetText}`}
+              href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(tweetTexts[shuffledCards[flippedIndex]])}`}
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Share on Twitter"
