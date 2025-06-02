@@ -38,7 +38,7 @@ export default function Home() {
   const [showShareText, setShowShareText] = useState(false);
 
   function onCardClick(index) {
-    setShowShareText(false); // сброс текста при смене карты или закрытии
+    setShowShareText(false);
     if (flippedIndex === null) {
       setFlippedIndex(index);
       setShowResult(true);
@@ -48,15 +48,13 @@ export default function Home() {
     }
   }
 
-  const tickerText = Array(24).fill('DATA BELONGS ON IRYS').join(' - ');
-
-  const tweetTextRaw = flippedIndex !== null ? tweetTexts[shuffledCards[flippedIndex]] : '';
-  const tweetText = encodeURIComponent(tweetTextRaw);
-
-  // Обработчик клика по кнопке твиттера
   function onTweetClick() {
     setShowShareText(true);
   }
+
+  const tickerText = Array(24).fill('DATA BELONGS ON IRYS').join(' - ');
+  const tweetTextRaw = flippedIndex !== null ? tweetTexts[shuffledCards[flippedIndex]] : '';
+  const tweetText = encodeURIComponent(tweetTextRaw);
 
   return (
     <>
@@ -273,21 +271,19 @@ export default function Home() {
 
         {showResult && (
           <div id="result" role="status" aria-live="polite">
-            <pre>{tweetTexts[shuffledCards[flippedIndex]]}</pre>
+            <div className="share-text">SHARE YOUR LOVE RIGHT NOW</div>
             <a
-              href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(tweetTexts[shuffledCards[flippedIndex]])}`}
+              href={`https://twitter.com/intent/tweet?text=${tweetText}`}
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Share on Twitter"
-              onClick={onTweetClick}
+              onClick={() => setShowShareText(true)}
             >
               <img src="/twitter.png" alt="Twitter Logo" draggable={false} />
             </a>
-            {showShareText && <div className="share-text">SHARE YOUR LOVE RIGHT NOW</div>}
           </div>
         )}
       </div>
     </>
   );
 }
-
