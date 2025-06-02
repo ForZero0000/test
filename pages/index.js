@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 const cardsImages = [
   'irys1.png',
@@ -25,6 +25,29 @@ export default function Home() {
   const [flippedIndex, setFlippedIndex] = useState(null);
   const [showResult, setShowResult] = useState(false);
 
+  // Для плавного бесконечного движения текста справа налево
+  const tickerRef = useRef(null);
+
+  useEffect(() => {
+    const el = tickerRef.current;
+    let animationFrameId;
+    let start = null;
+    let width = el ? el.offsetWidth : 0;
+    let containerWidth = el ? el.parentElement.offsetWidth : 0;
+    let x = 0;
+
+    function step(timestamp) {
+      if (!start) start = timestamp;
+      const elapsed = timestamp - start;
+      // скорость 50 пикселей в секунду
+      x = (containerWidth - (elapsed * 0.05)) % (width + containerWidth);
+      el.style.transform = `translateX(${x}px)`;
+      animationFrameId = requestAnimationFrame(step);
+    }
+    animationFrameId = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(animationFrameId);
+  }, []);
+
   function onCardClick(index) {
     if (flippedIndex !== null) return;
     setFlippedIndex(index);
@@ -40,9 +63,11 @@ export default function Home() {
           text-align: center;
           color: white;
           font-family: Arial, sans-serif;
-          background-color: #111;
+          background: url('/irys.png') center center / cover no-repeat fixed;
           min-height: 100vh;
           padding: 20px;
+          position: relative;
+          overflow: hidden;
         }
         .game-container {
           display: flex;
@@ -50,6 +75,9 @@ export default function Home() {
           justify-content: center;
           gap: 15px;
           padding: 20px 0;
+          backdrop-filter: brightness(0.7);
+          border-radius: 12px;
+          background: rgba(0,0,0,0.5);
         }
         .card {
           width: 100px;
@@ -99,6 +127,7 @@ export default function Home() {
           margin-top: 25px;
           font-size: 22px;
           font-weight: bold;
+          text-shadow: 0 0 6px black;
         }
         #result a {
           color: #00acee;
@@ -106,9 +135,37 @@ export default function Home() {
           font-weight: bold;
           margin-left: 8px;
         }
+        /* Бегущий текст справа налево */
+        .ticker-container {
+          position: fixed;
+          top: 10px;
+          width: 100%;
+          height: 30px;
+          overflow: hidden;
+          pointer-events: none;
+          user-select: none;
+          z-index: 1000;
+          background: rgba(0, 0, 0, 0.3);
+        }
+        .ticker-text {
+          white-space: nowrap;
+          display: inline-block;
+          font-weight: bold;
+          font-size: 24px;
+          color: #00acee;
+          will-change: transform;
+          user-select: none;
+          padding-left: 100%;
+        }
       `}</style>
 
-      <div className="container">
+      <div className="ticker-container" aria-hidden="true">
+        <div className="ticker-text" ref={tickerRef}>
+          DATA BELONGS ON IRYS — DATA BELONGS ON IRYS — DATA BELONGS ON IRYS — 
+        </div>
+      </div>
+
+      <div className="container" role="main">
         <h1>Игра "Угадай карту"</h1>
 
         <div className="game-container">
@@ -122,6 +179,8 @@ export default function Home() {
               onKeyDown={(e) => {
                 if (e.key === 'Enter' || e.key === ' ') onCardClick(i);
               }}
+              aria-pressed={flippedIndex === i}
+              aria-label={`Карта ${i + 1}`}
             >
               <div className="card-inner">
                 <div className="card-front" />
@@ -134,9 +193,14 @@ export default function Home() {
         </div>
 
         {showResult && (
-          <div id="result">
+          <div id="result" role="status" aria-live="polite">
             ПОЗДРАВЛЯЮ, ИРИС ЛЮБИТ ТЕБЯ
-            <a href="https://twitter.com/irys_xyz" target="_blank" rel="noopener noreferrer">
+            <a
+              href="https://twitter.com/irys_xyz"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Twitter irys_xyz"
+            >
               @irys_xyz
             </a>
           </div>
@@ -145,3 +209,4 @@ export default function Home() {
     </>
   );
 }
+
