@@ -86,15 +86,12 @@ export default function Home() {
           box-sizing: border-box;
           color: white;
         }
-        h1 {
-          margin: 0 0 20px;
-          user-select: none;
-        }
+        /* Гифка увеличена в 1.5 раза */
         .gif-title {
           display: block;
           margin: 0 auto 20px;
-          max-width: 280px;
-          width: 100%;
+          width: 420px; /* 280 * 1.5 */
+          max-width: 100%;
           user-select: none;
         }
         .game-container {
@@ -108,6 +105,7 @@ export default function Home() {
           flex-grow: 1;
           box-sizing: border-box;
         }
+        /* фиксируем box-sizing чтобы не сдвигались */
         .card, .card-inner, .card-front, .card-back {
           box-sizing: border-box;
         }
@@ -117,7 +115,7 @@ export default function Home() {
           perspective: 1000px;
           cursor: pointer;
           user-select: none;
-          transition: transform 0.3s ease;
+          transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
           will-change: transform;
           background: black;
           border-radius: 14px;
@@ -125,17 +123,19 @@ export default function Home() {
           padding: 0;
           border: none;
           outline: none;
+          /* Чтобы избежать смещения, не менять размеры, не влиять на поток */
+          /* И добавить preserve-3d для плавного поворота */
         }
         .card-inner {
           position: relative;
           width: 100%;
           height: 100%;
-          transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
           transform-style: preserve-3d;
           border-radius: 14px;
           box-shadow: 0 0 14px rgba(0, 0, 0, 0.9);
           background: black;
           backface-visibility: hidden;
+          transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
         }
         .card.flipped .card-inner {
           transform: rotateY(180deg);
@@ -253,7 +253,6 @@ export default function Home() {
       </div>
 
       <div className="container" role="main">
-        {/* gif вместо заголовка */}
         <img src="/gifirys.gif" alt="Choose Your Love Irysian" className="gif-title" draggable={false} />
 
         <div className="game-container">
