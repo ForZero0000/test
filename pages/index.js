@@ -292,3 +292,140 @@ const tickerInnerStyle = {
   fontSize: '1.5rem',
   color: 'white',
 };
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Игра Угадай Карту</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background: #111;
+    color: white;
+    text-align: center;
+    padding: 20px;
+  }
+  .game-container {
+    max-width: 720px;
+    margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 15px;
+  }
+  .card {
+    width: 100px;
+    height: 140px;
+    perspective: 800px;
+    cursor: pointer;
+  }
+  .card-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transition: transform 0.6s;
+    transform-style: preserve-3d;
+  }
+  .card.flipped .card-inner {
+    transform: rotateY(180deg);
+  }
+  .card-front, .card-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 10px;
+    backface-visibility: hidden;
+    box-shadow: 0 0 10px #000;
+  }
+  .card-front {
+    background: url('iryslogo.png') center center / cover no-repeat;
+  }
+  .card-back {
+    background: #222;
+    transform: rotateY(180deg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .card-back img {
+    max-width: 90%;
+    max-height: 90%;
+    border-radius: 8px;
+  }
+  #result {
+    margin-top: 25px;
+    font-size: 20px;
+    display: none;
+  }
+  #result a {
+    color: #00acee;
+    text-decoration: none;
+    font-weight: bold;
+  }
+</style>
+</head>
+<body>
+
+<h1>Игра "Угадай карту"</h1>
+<div class="game-container" id="game"></div>
+
+<div id="result">
+  ПОЗДРАВЛЯЮ, ИРИС ЛЮБИТ ТЕБЯ<br />
+  <a href="https://twitter.com/irys_xyz" target="_blank">@irys_xyz</a>
+</div>
+
+<script>
+  const gameContainer = document.getElementById('game');
+  const resultDiv = document.getElementById('result');
+
+  // Массив с картинками для карт
+  const cardsImages = [
+    'irys1.png',
+    'irys2.png',
+    'irys3.png',
+    'irys4.png',
+    'irys5.png',
+    'irys6.png',
+    'irys7.png',
+    'irys8.png'
+  ];
+
+  // Перемешиваем массив — для случайного расположения карт
+  function shuffle(array) {
+    for(let i = array.length -1; i > 0; i--){
+      const j = Math.floor(Math.random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]];
+    }
+  }
+
+  shuffle(cardsImages);
+
+  // Создаем карточки
+  cardsImages.forEach((imgSrc, index) => {
+    const card = document.createElement('div');
+    card.classList.add('card');
+
+    card.innerHTML = `
+      <div class="card-inner">
+        <div class="card-front"></div>
+        <div class="card-back"><img src="${imgSrc}" alt="irys${index + 1}" /></div>
+      </div>
+    `;
+
+    // Обработчик клика
+    card.addEventListener('click', () => {
+      if (card.classList.contains('flipped')) return; // нельзя повторно кликать
+      card.classList.add('flipped');
+      // Показать результат
+      resultDiv.style.display = 'block';
+    });
+
+    gameContainer.appendChild(card);
+  });
+</script>
+
+</body>
+</html>
+
