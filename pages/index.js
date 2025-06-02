@@ -50,18 +50,21 @@ export default function Home() {
 
   return (
     <>
-      <style jsx>{`
+      <style jsx global>{`
+        /* Фон на весь экран без белого */
         html, body, #__next {
           height: 100%;
           margin: 0;
           padding: 0;
           overflow-x: hidden;
-          /* Фон на весь экран, но сужен по ширине (auto ширина, 100% высота) */
           background: url('/irys.png') center center / auto 100% no-repeat fixed;
+          background-color: black;
           font-family: Arial, sans-serif;
           color: white;
           background-attachment: fixed;
         }
+      `}</style>
+      <style jsx>{`
         .container {
           max-width: 720px;
           margin: 40px auto;
@@ -201,7 +204,7 @@ export default function Home() {
           color: #00acee;
           user-select: none;
           font-family: system-ui, sans-serif;
-          animation: tickerMove 40s linear infinite; /* скорость уменьшена в 2 раза */
+          animation: tickerMove 40s linear infinite;
           padding-left: 0;
           margin-left: -100%;
         }
