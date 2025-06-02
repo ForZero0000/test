@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState } from 'react';
 
 const cardsImages = [
   'irys1.png',
@@ -11,7 +11,6 @@ const cardsImages = [
   'irys8.png',
 ];
 
-// Тексты твитов для каждой карты
 const tweetTexts = {
   'irys1.png': "@Rez_aahmadi loves you! I'm Spirit of @irys_xyz - JOIN ME https://www.iryna-checker-meme.app/",
   'irys2.png': "@xaitoshi_ loves you! I'm Spirit of @irys_xyz - JOIN ME https://www.iryna-checker-meme.app/",
@@ -37,27 +36,6 @@ export default function Home() {
   const [flippedIndex, setFlippedIndex] = useState(null);
   const [showResult, setShowResult] = useState(false);
 
-  const tickerRef = useRef(null);
-
-  useEffect(() => {
-    const el = tickerRef.current;
-    let animationFrameId;
-    let start = null;
-    let width = el ? el.offsetWidth : 0;
-    let containerWidth = el ? el.parentElement.offsetWidth : 0;
-    let x = 0;
-
-    function step(timestamp) {
-      if (!start) start = timestamp;
-      const elapsed = timestamp - start;
-      x = (containerWidth - (elapsed * 0.12)) % (width + containerWidth);
-      el.style.transform = `translateX(${x}px)`;
-      animationFrameId = requestAnimationFrame(step);
-    }
-    animationFrameId = requestAnimationFrame(step);
-    return () => cancelAnimationFrame(animationFrameId);
-  }, []);
-
   function onCardClick(index) {
     if (flippedIndex === null) {
       setFlippedIndex(index);
@@ -68,34 +46,33 @@ export default function Home() {
     }
   }
 
-  // Получаем имя файла выбранной карты для твита
-  const selectedImg = flippedIndex !== null ? shuffledCards[flippedIndex] : null;
-  const tweetText = selectedImg ? tweetTexts[selectedImg] : '';
-
-  // URL для твита (закодированный)
-  const tweetUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(tweetText)}`;
+  const tickerText = Array(24).fill('DATA BELONGS ON IRYS').join(' - ');
 
   return (
     <>
       <style jsx>{`
-        html, body, body > div, #__next, #__next > div {
+        html, body, #__next {
           height: 100%;
           margin: 0;
+          padding: 0;
+          overflow-x: hidden;
+          background: url('/irys.png') center center / cover no-repeat fixed;
+          font-family: Arial, sans-serif;
+          color: white;
+          background-attachment: fixed;
         }
         .container {
           max-width: 720px;
           margin: 40px auto;
           text-align: center;
-          color: white;
-          font-family: Arial, sans-serif;
-          background: url('/irys.png') center center / cover no-repeat fixed;
-          min-height: 100vh;
+          background: rgba(0, 0, 0, 0.65);
+          border-radius: 12px;
           padding: 20px;
-          position: relative;
-          overflow: hidden;
+          min-height: 100vh;
           display: flex;
           flex-direction: column;
           justify-content: flex-start;
+          box-sizing: border-box;
         }
         h1 {
           font-family: system-ui, sans-serif;
@@ -147,7 +124,7 @@ export default function Home() {
           backface-visibility: hidden;
         }
         .card-front {
-          background: url('/iryslogo.png') center center / cover no-repeat;
+          background: url('/cdpcRzVY_400x400 (8).jpg') center center / cover no-repeat;
           background-color: #222;
           box-shadow: inset 0 0 8px #000;
         }
@@ -200,7 +177,7 @@ export default function Home() {
           user-select: none;
           filter: drop-shadow(0 0 1px #000);
         }
-        /* Бегущий текст справа налево */
+        /* Бегущий текст слева направо */
         .ticker-container {
           position: fixed;
           top: 0;
@@ -220,16 +197,25 @@ export default function Home() {
           font-weight: 900;
           font-size: 26px;
           color: #00acee;
-          will-change: transform;
           user-select: none;
-          padding-left: 100%;
           font-family: system-ui, sans-serif;
+          animation: tickerMove 20s linear infinite;
+          padding-left: 0;
+          margin-left: -100%;
+        }
+        @keyframes tickerMove {
+          0% {
+            transform: translateX(-100%);
+          }
+          100% {
+            transform: translateX(100%);
+          }
         }
       `}</style>
 
       <div className="ticker-container" aria-hidden="true">
-        <div className="ticker-text" ref={tickerRef}>
-          DATA BELONGS ON IRYS — DATA BELONGS ON IRYS — DATA BELONGS ON IRYS — 
+        <div className="ticker-text">
+          {Array(24).fill('DATA BELONGS ON IRYS').join(' - ')}
         </div>
       </div>
 
@@ -264,7 +250,7 @@ export default function Home() {
           <div id="result" role="status" aria-live="polite">
             <div>Share your love with IRYS</div>
             <a
-              href={tweetUrl}
+              href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(tweetTexts[shuffledCards[flippedIndex]])}`}
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Share on Twitter"
