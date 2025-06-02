@@ -11,7 +11,6 @@ const cardsImages = [
   'irys8.png',
 ];
 
-// Функция для перемешивания массива
 function shuffle(array) {
   let arr = [...array];
   for (let i = arr.length - 1; i > 0; i--) {
@@ -27,7 +26,7 @@ export default function Home() {
   const [showResult, setShowResult] = useState(false);
 
   function onCardClick(index) {
-    if (flippedIndex !== null) return; // нельзя кликать повторно
+    if (flippedIndex !== null) return;
     setFlippedIndex(index);
     setShowResult(true);
   }
@@ -35,16 +34,15 @@ export default function Home() {
   return (
     <>
       <style jsx>{`
-        body {
-          margin: 0;
-          background-color: #111;
-          color: white;
-          font-family: Arial, sans-serif;
-        }
         .container {
           max-width: 720px;
           margin: 40px auto;
           text-align: center;
+          color: white;
+          font-family: Arial, sans-serif;
+          background-color: #111;
+          min-height: 100vh;
+          padding: 20px;
         }
         .game-container {
           display: flex;
@@ -100,7 +98,6 @@ export default function Home() {
         #result {
           margin-top: 25px;
           font-size: 22px;
-          color: white;
           font-weight: bold;
         }
         #result a {
