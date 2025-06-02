@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 const cardsImages = [
   'irys1.png',
@@ -34,27 +34,39 @@ function shuffle(array) {
 export default function Home() {
   const [shuffledCards] = useState(() => shuffle(cardsImages));
   const [flippedIndex, setFlippedIndex] = useState(null);
-  const [showResult, setShowResult] = useState(false);
-  const [showShareText, setShowShareText] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
 
   function onCardClick(index) {
-    setShowShareText(false);
     if (flippedIndex === null) {
       setFlippedIndex(index);
-      setShowResult(true);
     } else if (flippedIndex === index) {
       setFlippedIndex(null);
-      setShowResult(false);
     }
   }
 
-  function onTweetClick() {
-    setShowShareText(true);
-  }
-
-  const tickerText = Array(24).fill('DATA BELONGS ON IRYS').join(' - ');
   const tweetTextRaw = flippedIndex !== null ? tweetTexts[shuffledCards[flippedIndex]] : '';
   const tweetText = encodeURIComponent(tweetTextRaw);
+
+  function openModal() {
+    setModalOpen(true);
+  }
+
+  function closeModal() {
+    setModalOpen(false);
+  }
+
+  // Закрытие модалки по ESC
+  useEffect(() => {
+    function onKeyDown(e) {
+      if (e.key === 'Escape') closeModal();
+    }
+    if (modalOpen) {
+      window.addEventListener('keydown', onKeyDown);
+    } else {
+      window.removeEventListener('keydown', onKeyDown);
+    }
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [modalOpen]);
 
   return (
     <>
@@ -86,11 +98,10 @@ export default function Home() {
           box-sizing: border-box;
           color: white;
         }
-        /* Гифка увеличена в 1.5 раза */
         .gif-title {
           display: block;
           margin: 0 auto 20px;
-          width: 420px; /* 280 * 1.5 */
+          width: 420px;
           max-width: 100%;
           user-select: none;
         }
@@ -105,7 +116,6 @@ export default function Home() {
           flex-grow: 1;
           box-sizing: border-box;
         }
-        /* фиксируем box-sizing чтобы не сдвигались */
         .card, .card-inner, .card-front, .card-back {
           box-sizing: border-box;
         }
@@ -123,8 +133,6 @@ export default function Home() {
           padding: 0;
           border: none;
           outline: none;
-          /* Чтобы избежать смещения, не менять размеры, не влиять на поток */
-          /* И добавить preserve-3d для плавного поворота */
         }
         .card-inner {
           position: relative;
@@ -169,49 +177,55 @@ export default function Home() {
           user-select: none;
           pointer-events: none;
         }
-        #result {
-          margin-top: 30px;
-          font-size: 22px;
-          font-weight: 700;
-          white-space: pre-line;
-          text-shadow: 0 0 8px black;
-          user-select: none;
-          background: black;
-          padding: 20px;
-          border-radius: 12px;
-          display: inline-flex;
-          flex-direction: column;
+        /* Модальное окно */
+        .modal-overlay {
+          position: fixed;
+          top: 0; left: 0; right: 0; bottom: 0;
+          background: rgba(0,0,0,0.85);
+          display: flex;
           align-items: center;
           justify-content: center;
-          gap: 15px;
-          margin-left: auto;
-          margin-right: auto;
-          max-width: 420px;
-          color: white;
+          z-index: 1500;
         }
-        #result a {
-          color: #00acee;
-          font-weight: 900;
-          display: inline-block;
+        .modal-content {
+          background: black;
+          padding: 30px 40px;
+          border-radius: 16px;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          max-width: 480px;
+          width: 90%;
+          box-sizing: border-box;
+          color: white;
+          user-select: none;
+          gap: 20px;
+        }
+        .modal-text {
+          font-size: 24px;
+          font-weight: 700;
+          text-transform: uppercase;
+          flex: 1;
+          text-align: left;
+          color: #00bfff;
+        }
+        .modal-twitter-button {
           width: 48px;
           height: 48px;
           cursor: pointer;
+          flex-shrink: 0;
         }
-        #result a img {
+        .modal-twitter-button img {
           width: 100%;
           height: 100%;
           object-fit: contain;
+          filter: drop-shadow(0 0 2px #000);
+          user-select: none;
           pointer-events: none;
-          user-select: none;
-          filter: drop-shadow(0 0 1px #000);
         }
-        .share-text {
-          font-size: 20px;
-          font-weight: 700;
-          color: #00bfff;
-          text-transform: uppercase;
-          user-select: none;
-        }
+
+        /* Остальной стиль не меняется */
+
         /* Бегущий текст слева направо */
         .ticker-container {
           position: fixed;
@@ -278,22 +292,47 @@ export default function Home() {
             </div>
           ))}
         </div>
+      </div>
 
-        {showResult && (
-          <div id="result" role="status" aria-live="polite">
-            <div className="share-text">SHARE YOUR LOVE RIGHT NOW</div>
+      {modalOpen && flippedIndex !== null && (
+        <div className="modal-overlay" onClick={closeModal} role="dialog" aria-modal="true" aria-labelledby="modal-title">
+          <div className="modal-content" onClick={e => e.stopPropagation()}>
+            <div id="modal-title" className="modal-text">SHARE YOUR LOVE RIGHT NOW</div>
             <a
-              href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(tweetTexts[shuffledCards[flippedIndex]])}`}
+              href={`https://twitter.com/intent/tweet?text=${tweetText}`}
               target="_blank"
               rel="noopener noreferrer"
+              className="modal-twitter-button"
               aria-label="Share on Twitter"
-              onClick={() => setShowShareText(true)}
+              onClick={closeModal}
             >
               <img src="/twitter.png" alt="Twitter Logo" draggable={false} />
             </a>
           </div>
-        )}
-      </div>
+        </div>
+      )}
+
+      {/* Кнопка для открытия модалки под результатом */}
+      {flippedIndex !== null && !modalOpen && (
+        <div style={{textAlign: 'center', marginTop: '15px'}}>
+          <button
+            onClick={openModal}
+            style={{
+              backgroundColor: '#00acee',
+              border: 'none',
+              borderRadius: '12px',
+              color: 'white',
+              fontWeight: '700',
+              padding: '10px 20px',
+              cursor: 'pointer',
+              fontSize: '16px',
+              userSelect: 'none',
+            }}
+          >
+            Share on Twitter
+          </button>
+        </div>
+      )}
     </>
   );
 }
