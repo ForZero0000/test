@@ -11,6 +11,18 @@ const cardsImages = [
   'irys8.png',
 ];
 
+// Тексты твитов для каждой карты
+const tweetTexts = {
+  'irys1.png': "@Rez_aahmadi loves you! I'm Spirit of @irys_xyz - JOIN ME https://www.iryna-checker-meme.app/",
+  'irys2.png': "@xaitoshi_ loves you! I'm Spirit of @irys_xyz - JOIN ME https://www.iryna-checker-meme.app/",
+  'irys3.png': "@DMacOnchain loves you! I'm Spirit of @irys_xyz - JOIN ME https://www.iryna-checker-meme.app/",
+  'irys4.png': "@0xGala loves you! I'm Spirit of @irys_xyz - JOIN ME https://www.iryna-checker-meme.app/",
+  'irys5.png': "@quang250802 loves you! I'm Spirit of @irys_xyz - JOIN ME https://www.iryna-checker-meme.app/",
+  'irys6.png': "@retreeq_ loves you! I'm Spirit of @irys_xyz - JOIN ME https://www.iryna-checker-meme.app/",
+  'irys7.png': "@misterwestwolf loves you! I'm Spirit of @irys_xyz - JOIN ME https://www.iryna-checker-meme.app/",
+  'irys8.png': "Iryna loves you! I'm Spirit of @irys_xyz - JOIN ME https://www.iryna-checker-meme.app/",
+};
+
 function shuffle(array) {
   let arr = [...array];
   for (let i = arr.length - 1; i > 0; i--) {
@@ -25,7 +37,6 @@ export default function Home() {
   const [flippedIndex, setFlippedIndex] = useState(null);
   const [showResult, setShowResult] = useState(false);
 
-  // Бегущий текст
   const tickerRef = useRef(null);
 
   useEffect(() => {
@@ -39,7 +50,6 @@ export default function Home() {
     function step(timestamp) {
       if (!start) start = timestamp;
       const elapsed = timestamp - start;
-      // скорость 120 пикселей в секунду (было 50)
       x = (containerWidth - (elapsed * 0.12)) % (width + containerWidth);
       el.style.transform = `translateX(${x}px)`;
       animationFrameId = requestAnimationFrame(step);
@@ -53,16 +63,25 @@ export default function Home() {
       setFlippedIndex(index);
       setShowResult(true);
     } else if (flippedIndex === index) {
-      // Закрыть открытую карту, если нажать на неё повторно
       setFlippedIndex(null);
       setShowResult(false);
     }
-    // Если открыт другой индекс — игнорируем клики на остальные карты
   }
+
+  // Получаем имя файла выбранной карты для твита
+  const selectedImg = flippedIndex !== null ? shuffledCards[flippedIndex] : null;
+  const tweetText = selectedImg ? tweetTexts[selectedImg] : '';
+
+  // URL для твита (закодированный)
+  const tweetUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(tweetText)}`;
 
   return (
     <>
       <style jsx>{`
+        html, body, body > div, #__next, #__next > div {
+          height: 100%;
+          margin: 0;
+        }
         .container {
           max-width: 720px;
           margin: 40px auto;
@@ -74,6 +93,9 @@ export default function Home() {
           padding: 20px;
           position: relative;
           overflow: hidden;
+          display: flex;
+          flex-direction: column;
+          justify-content: flex-start;
         }
         h1 {
           font-family: system-ui, sans-serif;
@@ -93,6 +115,7 @@ export default function Home() {
           backdrop-filter: brightness(0.7);
           border-radius: 12px;
           background: rgba(0, 0, 0, 0.6);
+          flex-grow: 1;
         }
         .card {
           width: 140px;
@@ -150,12 +173,32 @@ export default function Home() {
           font-weight: 900;
           text-shadow: 0 0 8px black;
           user-select: none;
+          background: rgba(0, 0, 0, 0.8);
+          padding: 15px 20px;
+          border-radius: 12px;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          gap: 15px;
+          margin-left: auto;
+          margin-right: auto;
+          max-width: 400px;
         }
         #result a {
           color: #00acee;
-          text-decoration: none;
           font-weight: 900;
-          margin-left: 12px;
+          display: inline-block;
+          width: 48px;
+          height: 48px;
+          cursor: pointer;
+        }
+        #result a img {
+          width: 100%;
+          height: 100%;
+          object-fit: contain;
+          pointer-events: none;
+          user-select: none;
+          filter: drop-shadow(0 0 1px #000);
         }
         /* Бегущий текст справа налево */
         .ticker-container {
@@ -219,14 +262,14 @@ export default function Home() {
 
         {showResult && (
           <div id="result" role="status" aria-live="polite">
-            ПОЗДРАВЛЯЮ, ИРИС ЛЮБИТ ТЕБЯ
+            <div>Share your love with IRYS</div>
             <a
-              href="https://twitter.com/irys_xyz"
+              href={tweetUrl}
               target="_blank"
               rel="noopener noreferrer"
-              aria-label="Twitter irys_xyz"
+              aria-label="Share on Twitter"
             >
-              @irys_xyz
+              <img src="/twitter.png" alt="Twitter Logo" draggable={false} />
             </a>
           </div>
         )}
@@ -234,4 +277,3 @@ export default function Home() {
     </>
   );
 }
-
