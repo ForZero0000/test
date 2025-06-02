@@ -35,8 +35,10 @@ export default function Home() {
   const [shuffledCards] = useState(() => shuffle(cardsImages));
   const [flippedIndex, setFlippedIndex] = useState(null);
   const [showResult, setShowResult] = useState(false);
+  const [showShareText, setShowShareText] = useState(false);
 
   function onCardClick(index) {
+    setShowShareText(false); // сброс текста при смене карты или закрытии
     if (flippedIndex === null) {
       setFlippedIndex(index);
       setShowResult(true);
@@ -48,9 +50,13 @@ export default function Home() {
 
   const tickerText = Array(24).fill('DATA BELONGS ON IRYS').join(' - ');
 
-  // Текст твита с заменой переносов на %0A (для URL)
   const tweetTextRaw = flippedIndex !== null ? tweetTexts[shuffledCards[flippedIndex]] : '';
   const tweetText = encodeURIComponent(tweetTextRaw);
+
+  // Обработчик клика по кнопке твиттера
+  function onTweetClick() {
+    setShowShareText(true);
+  }
 
   return (
     <>
@@ -191,7 +197,13 @@ export default function Home() {
           user-select: none;
           filter: drop-shadow(0 0 1px #000);
         }
-
+        .share-text {
+          font-size: 20px;
+          font-weight: 700;
+          color: #00bfff;
+          text-transform: uppercase;
+          user-select: none;
+        }
         /* Бегущий текст слева направо */
         .ticker-container {
           position: fixed;
@@ -229,13 +241,11 @@ export default function Home() {
       `}</style>
 
       <div className="ticker-container" aria-hidden="true">
-        <div className="ticker-text">
-          {tickerText}
-        </div>
+        <div className="ticker-text">{Array(24).fill('DATA BELONGS ON IRYS').join(' - ')}</div>
       </div>
 
       <div className="container" role="main">
-        <h1>CHOOSE YOUR LOVE SPRITE</h1>
+        <h1>CHOOSE YOUR LOVE IRYSIAN</h1>
 
         <div className="game-container">
           {shuffledCards.map((img, i) => (
@@ -263,18 +273,21 @@ export default function Home() {
 
         {showResult && (
           <div id="result" role="status" aria-live="polite">
-            {tweetTexts[shuffledCards[flippedIndex]]}
+            <pre>{tweetTexts[shuffledCards[flippedIndex]]}</pre>
             <a
-              href={`https://twitter.com/intent/tweet?text=${tweetText}`}
+              href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(tweetTexts[shuffledCards[flippedIndex]])}`}
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Share on Twitter"
+              onClick={onTweetClick}
             >
               <img src="/twitter.png" alt="Twitter Logo" draggable={false} />
             </a>
+            {showShareText && <div className="share-text">SHARE YOUR LOVE RIGHT NOW</div>}
           </div>
         )}
       </div>
     </>
   );
 }
+
