@@ -12,14 +12,14 @@ const cardsImages = [
 ];
 
 const tweetTexts = {
-  'irys1.png': "@Rez_aahmadi loves you! I'm Spirit of @irys_xyz - JOIN ME https://www.iryna-checker-meme.app/",
-  'irys2.png': "@xaitoshi_ loves you! I'm Spirit of @irys_xyz - JOIN ME https://www.iryna-checker-meme.app/",
-  'irys3.png': "@DMacOnchain loves you! I'm Spirit of @irys_xyz - JOIN ME https://www.iryna-checker-meme.app/",
-  'irys4.png': "@0xGala loves you! I'm Spirit of @irys_xyz - JOIN ME https://www.iryna-checker-meme.app/",
-  'irys5.png': "@quang250802 loves you! I'm Spirit of @irys_xyz - JOIN ME https://www.iryna-checker-meme.app/",
-  'irys6.png': "@retreeq_ loves you! I'm Spirit of @irys_xyz - JOIN ME https://www.iryna-checker-meme.app/",
-  'irys7.png': "@misterwestwolf loves you! I'm Spirit of @irys_xyz - JOIN ME https://www.iryna-checker-meme.app/",
-  'irys8.png': "Iryna loves you! I'm Spirit of @irys_xyz - JOIN ME https://www.iryna-checker-meme.app/",
+  'irys1.png': `@Rez_aahmadi loves you!\nI'm Spirit of @irys_xyz\nJOIN ME https://www.iryna-checker-meme.app/`,
+  'irys2.png': `@xaitoshi_ loves you!\nI'm Spirit of @irys_xyz\nJOIN ME https://www.iryna-checker-meme.app/`,
+  'irys3.png': `@DMacOnchain loves you!\nI'm Spirit of @irys_xyz\nJOIN ME https://www.iryna-checker-meme.app/`,
+  'irys4.png': `@0xGala loves you!\nI'm Spirit of @irys_xyz\nJOIN ME https://www.iryna-checker-meme.app/`,
+  'irys5.png': `@quang250802 loves you!\nI'm Spirit of @irys_xyz\nJOIN ME https://www.iryna-checker-meme.app/`,
+  'irys6.png': `@retreeq_ loves you!\nI'm Spirit of @irys_xyz\nJOIN ME https://www.iryna-checker-meme.app/`,
+  'irys7.png': `loves you!\nI'm Spirit of @irys_xyz\nJOIN ME https://www.iryna-checker-meme.app/`,
+  'irys8.png': `Iryna loves you!\nI'm Spirit of @irys_xyz\nJOIN ME https://www.iryna-checker-meme.app/`,
 };
 
 function shuffle(array) {
@@ -48,10 +48,13 @@ export default function Home() {
 
   const tickerText = Array(24).fill('DATA BELONGS ON IRYS').join(' - ');
 
+  // Текст твита с заменой переносов на %0A (для URL)
+  const tweetTextRaw = flippedIndex !== null ? tweetTexts[shuffledCards[flippedIndex]] : '';
+  const tweetText = encodeURIComponent(tweetTextRaw);
+
   return (
     <>
       <style jsx global>{`
-        /* Фон на весь экран без белого */
         html, body, #__next {
           height: 100%;
           margin: 0;
@@ -69,7 +72,7 @@ export default function Home() {
           max-width: 720px;
           margin: 40px auto;
           text-align: center;
-          background: rgba(0, 0, 0, 0.65);
+          background: black;
           border-radius: 12px;
           padding: 20px;
           min-height: 100vh;
@@ -77,6 +80,7 @@ export default function Home() {
           flex-direction: column;
           justify-content: flex-start;
           box-sizing: border-box;
+          color: white;
         }
         h1 {
           font-family: system-ui, sans-serif;
@@ -93,9 +97,8 @@ export default function Home() {
           justify-content: center;
           gap: 25px;
           padding: 20px 0;
-          backdrop-filter: brightness(0.7);
+          background: black;
           border-radius: 12px;
-          background: rgba(0, 0, 0, 0.6);
           flex-grow: 1;
         }
         .card {
@@ -106,6 +109,8 @@ export default function Home() {
           user-select: none;
           transition: transform 0.3s ease;
           will-change: transform;
+          background: black;
+          border-radius: 14px;
         }
         .card-inner {
           position: relative;
@@ -115,6 +120,7 @@ export default function Home() {
           transform-style: preserve-3d;
           border-radius: 14px;
           box-shadow: 0 0 14px rgba(0, 0, 0, 0.9);
+          background: black;
         }
         .card.flipped .card-inner {
           transform: rotateY(180deg);
@@ -126,14 +132,15 @@ export default function Home() {
           height: 100%;
           border-radius: 14px;
           backface-visibility: hidden;
+          background: black;
         }
         .card-front {
           background: url('/cdpcRzVY_400x400 (8).jpg') center center / cover no-repeat;
-          background-color: #222;
+          background-color: black;
           box-shadow: inset 0 0 8px #000;
         }
         .card-back {
-          background-color: #222;
+          background-color: black;
           transform: rotateY(180deg);
           display: flex;
           align-items: center;
@@ -150,20 +157,23 @@ export default function Home() {
         }
         #result {
           margin-top: 30px;
-          font-size: 26px;
-          font-weight: 900;
+          font-size: 22px;
+          font-weight: 700;
+          white-space: pre-line;
           text-shadow: 0 0 8px black;
           user-select: none;
-          background: rgba(0, 0, 0, 0.8);
-          padding: 15px 20px;
+          background: black;
+          padding: 20px;
           border-radius: 12px;
           display: inline-flex;
+          flex-direction: column;
           align-items: center;
           justify-content: center;
           gap: 15px;
           margin-left: auto;
           margin-right: auto;
-          max-width: 400px;
+          max-width: 420px;
+          color: white;
         }
         #result a {
           color: #00acee;
@@ -220,7 +230,7 @@ export default function Home() {
 
       <div className="ticker-container" aria-hidden="true">
         <div className="ticker-text">
-          {Array(24).fill('DATA BELONGS ON IRYS').join(' - ')}
+          {tickerText}
         </div>
       </div>
 
@@ -253,9 +263,9 @@ export default function Home() {
 
         {showResult && (
           <div id="result" role="status" aria-live="polite">
-            <div>Share your love with IRYS</div>
+            {tweetTexts[shuffledCards[flippedIndex]]}
             <a
-              href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(tweetTexts[shuffledCards[flippedIndex]])}`}
+              href={`https://twitter.com/intent/tweet?text=${tweetText}`}
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Share on Twitter"
